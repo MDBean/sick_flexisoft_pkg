@@ -1,6 +1,7 @@
 #include "sick_flexisoft_pkg/flexisoft_library.h"
 
 
+
 clientSock::clientSock(string host, unsigned int port)
 {
     int t = 0;
@@ -27,7 +28,7 @@ clientSock::~clientSock()
 
 int clientSock::connect()
 {
-    cout << "connect========" << endl;
+    cout << "connecting!!" << endl;
     clientSock::host = HOST_IP;
     clientSock::port = PORT_IP;
 
@@ -57,7 +58,7 @@ int clientSock::connect()
         else
         {
             connected = true;
-            cout << "connectED========" << endl;
+            cout << "connected!!!" << endl;
             return 0;
         }
     }
