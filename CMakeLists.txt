@@ -64,7 +64,11 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate services in the 'srv' folder
 add_service_files(FILES
-FlexGetStopOperationalSrv.srv
+FlexSetStopOperationalSrv.srv
+FlexSetZoneSrv.srv
+FlexSetMuteReleaseSrv.srv
+FlexSetPayloadSrv.srv
+FlexSetMappingSrv.srv
 #  Service1.srv
 #   Service2.srv
 )
