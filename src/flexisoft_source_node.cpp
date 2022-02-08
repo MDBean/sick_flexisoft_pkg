@@ -6,51 +6,50 @@
 #include <sick_flexisoft_pkg/FlexSetPayloadSrv.h>
 #include <sick_flexisoft_pkg/FlexSetMappingSrv.h>
 
-
-
 clientSock *Flexisoft = new clientSock("10.147.20.68", 1100);
 
-bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request  &req,
+bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
                                         sick_flexisoft_pkg::FlexSetStopOperationalSrv::Response &res)
 {
-  res.success = req.STOP_OPERATIONAL;
-  
-  ROS_INFO("sending back response: [%B]", res.success);
-  return true;
-} 
-bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request  &req,
-                                        sick_flexisoft_pkg::FlexSetZoneSrv::Response &res)
-{
-  res.success = req.STOP_OPERATIONAL;
-  
-  ROS_INFO("sending back response: [%B]", res.success);
-  return true;
+    do
+    {
+        Flexisoft->flex_write_bit(IPC_IN_IPC_IO_START, req.STOP_OPERATIONAL);
+    } while (Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL) == req.STOP_OPERATIONAL);
+    ROS_INFO("FlexSetStopOperationalSrv done");
+    return true;
 }
-bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Request  &req,
-                                        sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Response &res)
+bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
+                             sick_flexisoft_pkg::FlexSetZoneSrv::Response &res)
 {
-  res.success = req.STOP_OPERATIONAL;
-  
-  ROS_INFO("sending back response: [%B]", res.success);
-  return true;
-}
-bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request  &req,
-                                        sick_flexisoft_pkg::FlexSetPayloadSrv::Response &res)
-{
-  res.success = req.STOP_OPERATIONAL;
-  
-  ROS_INFO("sending back response: [%B]", res.success);
-  return true;
-}
-bool ServiceCbFlexSetMappingSrv(sick_flexisoft_pkg::FlexSetMappingSrv::Request  &req,
-                                        sick_flexisoft_pkg::FlexSetMappingSrv::Response &res)
-{
-  res.success = req.STOP_OPERATIONAL;
-  
-  ROS_INFO("sending back response: [%B]", res.success);
-  return true;
-}
+    res.success = req.STOP_OPERATIONAL;
 
+    ROS_INFO("sending back response: [%B]", res.success);
+    return true;
+}
+bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Request &req,
+                                    sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Response &res)
+{
+    res.success = req.STOP_OPERATIONAL;
+
+    ROS_INFO("sending back response: [%B]", res.success);
+    return true;
+}
+bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
+                                sick_flexisoft_pkg::FlexSetPayloadSrv::Response &res)
+{
+    res.success = req.STOP_OPERATIONAL;
+
+    ROS_INFO("sending back response: [%B]", res.success);
+    return true;
+}
+bool ServiceCbFlexSetMappingSrv(sick_flexisoft_pkg::FlexSetMappingSrv::Request &req,
+                                sick_flexisoft_pkg::FlexSetMappingSrv::Response &res)
+{
+    res.success = req.STOP_OPERATIONAL;
+
+    ROS_INFO("sending back response: [%B]", res.success);
+    return true;
+}
 
 int main(int argc, char **argv)
 {
@@ -63,13 +62,9 @@ int main(int argc, char **argv)
     ros::ServiceServer Srv_FlexSetMuteReleaseSrv = nh.advertiseService("FlexSetMuteReleaseSrv", ServiceCbFlexSetMuteReleaseSrv);
     ros::ServiceServer Srv_FlexSetPayloadSrv = nh.advertiseService("FlexSetPayloadSrv", ServiceCbFlexSetPayloadSrv);
     ros::ServiceServer Srv_FlexSetMappingSrv = nh.advertiseService("FlexSetMappingSrv", ServiceCbFlexSetMappingSrv);
-   
 
+    // sick_flexisoft_pkg::SAFE_SP_AGV SAFE_SP_AGV;
 
-
-    //sick_flexisoft_pkg::SAFE_SP_AGV SAFE_SP_AGV;
-    
-    
     ros::Rate loop_rate(30);
     while (ros::ok())
     {
@@ -82,13 +77,12 @@ int main(int argc, char **argv)
         {
             /* code */
 
-            //Flexisoft->tcp_read(DATA_SET_01);
-            
+            // Flexisoft->tcp_read(DATA_SET_01);
 
-            //Flexisoft->tcp_write_all();
-            // sleep(1);
-            // cout << "running" << endl;
-            // ROS_INFO("FLEXISOFT IS RUNNING......");
+            // Flexisoft->tcp_write_all();
+            //  sleep(1);
+            //  cout << "running" << endl;
+            //  ROS_INFO("FLEXISOFT IS RUNNING......");
             ros::spinOnce();
             loop_rate.sleep();
 
@@ -108,8 +102,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
-
-
-
-  

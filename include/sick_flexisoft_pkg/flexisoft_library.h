@@ -169,9 +169,13 @@ class clientSock {
     int tcp_read_all();
     int tcp_write_all();
 
+
+
     int tcp_read(uint8_t data_set);
     int tcp_write( uint8_t data_set);
 
+    int flex_write_bit(uint8_t data_set, int address_word, int address_bit, const bool value);
+    bool flex_read_bit(uint8_t data_set,int address_word, int address_bit);
     //void print_data(int func, uint8_t data_set);
     void print_data(uint16_t buffer[],int lengh);
 

@@ -846,7 +846,17 @@ int clientSock::tcp_write_all()
     tcp_write(DATA_SET_04);
     tcp_write(DATA_SET_05);
 }
+int clientSock::flex_write_bit(uint8_t data_set, int address_word, int address_bit, const bool value)
+{
+    write_bit(data_set,address_word,address_bit,value);
+    tcp_write(data_set);
+}
+bool clientSock::flex_read_bit(uint8_t data_set,int address_word, int address_bit)
+{
+    tcp_read(data_set);
+    return read_bit(data_set,address_word,address_bit);
 
+}
 size_t clientSock::tcp_send(uint16_t *to_send, int length)
 {
     if (connected)

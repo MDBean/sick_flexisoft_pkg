@@ -449,6 +449,8 @@
 #define FX3_SAF_STATE_CANCEL	    1 , 24 , 9
 #define FX3_SAF_STATE_DONE	    1 , 24 , 10
 	
+#define IPC_IN_IPC_IO_START    1 , 0 , 0
+
 	
 	
 	
