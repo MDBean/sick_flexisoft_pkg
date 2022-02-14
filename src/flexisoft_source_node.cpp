@@ -6,49 +6,107 @@
 #include <sick_flexisoft_pkg/FlexSetPayloadSrv.h>
 #include <sick_flexisoft_pkg/FlexSetMappingSrv.h>
 
-clientSock *Flexisoft = new clientSock("10.147.20.68", 1100);
+clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
                                         sick_flexisoft_pkg::FlexSetStopOperationalSrv::Response &res)
 {
-    do
+for (size_t i = 0; i < 4; i++)
     {
-        Flexisoft->flex_write_bit(IPC_IN_IPC_IO_START, req.STOP_OPERATIONAL);
-    } while (Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL) == req.STOP_OPERATIONAL);
-    ROS_INFO("FlexSetStopOperationalSrv done");
-    return true;
+        Flexisoft->flex_write_bit(IPC_STOP_OPERATIONAL_RELEASE, req.STOP_OPERATIONAL);
+        if ((Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL)) == req.STOP_OPERATIONAL)
+        {
+        res.success = true;
+        ROS_INFO(" ");
+        ROS_INFO("sending back response: [%x]",Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL));
+        ROS_INFO(" FlexSetStopOperationalSrv done");
+        return true;
+        }
+  
+    }
+        res.success = false;
+        ROS_INFO("FlexSetStopOperationalSrv false");
+        return true;    
 }
 bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
                              sick_flexisoft_pkg::FlexSetZoneSrv::Response &res)
 {
-    res.success = req.STOP_OPERATIONAL;
-
-    ROS_INFO("sending back response: [%B]", res.success);
-    return true;
+for (size_t i = 0; i < 4; i++)
+    {
+        Flexisoft->flex_write_bit(IPC_STOP_OPERATIONAL_RELEASE, req.STOP_OPERATIONAL);
+        if ((Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL)) == req.STOP_OPERATIONAL)
+        {
+        res.success = true;
+        ROS_INFO(" ");
+        ROS_INFO("sending back response: [%x]",Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL));
+        ROS_INFO(" FlexSetStopOperationalSrv done");
+        return true;
+        }
+  
+    }
+        res.success = false;
+        ROS_INFO("FlexSetStopOperationalSrv false");
+        return true;
 }
 bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Request &req,
                                     sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Response &res)
 {
-    res.success = req.STOP_OPERATIONAL;
-
-    ROS_INFO("sending back response: [%B]", res.success);
-    return true;
+for (size_t i = 0; i < 4; i++)
+    {
+        Flexisoft->flex_write_bit(IPC_SAF_MUTE_RELEASE, req.MUTE_RELEASE);
+        if ((Flexisoft->flex_read_bit(FX3_SAF_MUTE_RELEASE)) == req.MUTE_RELEASE)
+        {
+        res.success = true;
+        ROS_INFO(" ");
+        ROS_INFO("sending back response: [%x]",Flexisoft->flex_read_bit(FX3_SAF_MUTE_RELEASE));
+        ROS_INFO(" FlexSetMuteReleaseSrv done");
+        return true;
+        }
+  
+    }
+        res.success = false;
+        ROS_INFO("FlexSetMuteReleaseSrv false");
+        return true;
 }
 bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
                                 sick_flexisoft_pkg::FlexSetPayloadSrv::Response &res)
 {
-    res.success = req.STOP_OPERATIONAL;
-
-    ROS_INFO("sending back response: [%B]", res.success);
-    return true;
+for (size_t i = 0; i < 4; i++)
+    {
+        Flexisoft->flex_write_bit(IPC_SAF_PAYLOAD_RELEASE, req.PAYLOAD_RELEASE);
+        if ((Flexisoft->flex_read_bit(FX3_SAF_PAYLOAD_RELEASE)) == req.PAYLOAD_RELEASE)
+        {
+        res.success = true;
+        ROS_INFO(" ");
+        ROS_INFO("sending back response: [%x]",Flexisoft->flex_read_bit(FX3_SAF_PAYLOAD_RELEASE));
+        ROS_INFO(" FlexSetPayloadSrv done");
+        return true;
+        }
+  
+    }
+        res.success = false;
+        ROS_INFO("FlexSetStopOperationalSrv false");
+        return true;
 }
 bool ServiceCbFlexSetMappingSrv(sick_flexisoft_pkg::FlexSetMappingSrv::Request &req,
                                 sick_flexisoft_pkg::FlexSetMappingSrv::Response &res)
 {
-    res.success = req.STOP_OPERATIONAL;
-
-    ROS_INFO("sending back response: [%B]", res.success);
-    return true;
+for (size_t i = 0; i < 4; i++)
+    {
+        Flexisoft->flex_write_bit(IPC_SAF_MAPPING_RELEASE, req.MAPPING_RELEASE);
+        if ((Flexisoft->flex_read_bit(FX3_SAF_MAPPING_RELEASE)) == req.MAPPING_RELEASE)
+        {
+        res.success = true;
+        ROS_INFO(" ");
+        ROS_INFO("sending back response: [%x]",Flexisoft->flex_read_bit(FX3_SAF_MAPPING_RELEASE));
+        ROS_INFO(" FlexSetMappingSrv done");
+        return true;
+        }
+  
+    }
+        res.success = false;
+        ROS_INFO("FlexSetMappingSrv false");
+        return true;
 }
 
 int main(int argc, char **argv)
