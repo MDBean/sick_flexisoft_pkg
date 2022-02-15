@@ -30,13 +30,60 @@ ros::Publisher fx3_saf_protective_field_pub;
 ros::Publisher fx3_saf_mode_switch_pub;
 
 sick_flexisoft_pkg::fx3_saf_protective_fault fx3_saf_protective_fault;
+sick_flexisoft_pkg::fx3_saf_stop_states fx3_saf_stop_states;
+sick_flexisoft_pkg::fx3_saf_stop_operational fx3_saf_stop_operational;
+sick_flexisoft_pkg::fx3_saf_stop_protective fx3_saf_stop_protective;
+sick_flexisoft_pkg::fx3_saf_stop_emergency fx3_saf_stop_emergency;
+sick_flexisoft_pkg::fx3_saf_stop_resume fx3_saf_stop_resume;
+sick_flexisoft_pkg::fx3_saf_status_states fx3_saf_status_states;
+sick_flexisoft_pkg::fx3_saf_protective_field fx3_saf_protective_field;
+sick_flexisoft_pkg::fx3_saf_mode_switch fx3_saf_mode_switch;
 
 void fx3_saf_protective_fault_function_pub()
 {
     fx3_saf_protective_fault.EFI =true;
     fx3_saf_protective_fault_pub.publish(fx3_saf_protective_fault);
 }
-
+void fx3_saf_stop_states_function_pub()
+{
+    fx3_saf_stop_states.STOP_STATES =true;
+    fx3_saf_stop_states_pub.publish(fx3_saf_stop_states);
+}
+void fx3_saf_stop_operational_function_pub()
+{
+    //fx3_saf_stop_operational.STOP_OPERATIONAL =true;
+    fx3_saf_stop_operational_pub.publish(fx3_saf_stop_operational);
+}
+void fx3_saf_stop_protective_function_pub()
+{
+    fx3_saf_stop_protective.PROTECTIVE_FIELD =true;
+    fx3_saf_stop_protective_pub.publish(fx3_saf_stop_protective);
+}
+void fx3_saf_stop_emergency_function_pub()
+{
+    fx3_saf_stop_emergency.EMERGENCY_EMC =true;
+    fx3_saf_stop_emergency_pub.publish(fx3_saf_stop_emergency);
+}
+void fx3_saf_stop_resume_function_pub()
+{
+    fx3_saf_stop_resume.IO_START =true;
+    fx3_saf_stop_resume_pub.publish(fx3_saf_stop_resume);
+}
+void fx3_saf_status_states_function_pub()
+{
+   // fx3_saf_status_states.EFI =true;
+    fx3_saf_status_states_pub.publish(fx3_saf_status_states);
+}
+void fx3_saf_protective_field_function_pub()
+{
+    fx3_saf_protective_field.FIELD_POWER =true;
+    fx3_saf_protective_field_pub.publish(fx3_saf_protective_field);
+}
+void fx3_saf_mode_switch_function_pub()
+{
+    fx3_saf_mode_switch.MODE_SWITCH =true;
+    fx3_saf_mode_switch_pub.publish(fx3_saf_mode_switch);
+}
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
                                         sick_flexisoft_pkg::FlexSetStopOperationalSrv::Response &res)
 {
@@ -176,6 +223,18 @@ fx3_saf_mode_switch_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_mode_switch>(
             /* code */
 
             // Flexisoft->tcp_read(DATA_SET_01);
+
+
+fx3_saf_protective_fault_function_pub();
+fx3_saf_stop_states_function_pub();
+fx3_saf_stop_operational_function_pub();
+fx3_saf_stop_protective_function_pub();
+fx3_saf_stop_emergency_function_pub();
+fx3_saf_stop_resume_function_pub();
+fx3_saf_status_states_function_pub();
+fx3_saf_protective_field_function_pub();
+fx3_saf_mode_switch_function_pub();
+
 
             // Flexisoft->tcp_write_all();
             //  sleep(1);
