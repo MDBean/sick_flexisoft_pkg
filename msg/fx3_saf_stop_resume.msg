@@ -1,0 +1,6 @@
+Header header
+bool IO_START
+bool STOP_PROTECTIVE
+bool STOP_EMERGENCY
+bool STOP_MANUAL
+bool MODE_LOCK

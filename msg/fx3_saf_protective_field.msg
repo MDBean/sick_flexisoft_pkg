@@ -1,0 +1,6 @@
+Header header
+bool FIELD_PERSONAL
+bool FIELD_DETECT
+bool FIELD_WARN
+bool FIELD_BRAKER
+bool FIELD_POWER

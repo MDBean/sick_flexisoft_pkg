@@ -53,14 +53,23 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-#add_message_files(
-#  FILES
+add_message_files(
+  FILES
+  fx3_saf_protective_fault.msg
+fx3_saf_stop_states.msg
+fx3_saf_stop_operational.msg
+fx3_saf_stop_protective.msg
+fx3_saf_stop_emergency.msg
+fx3_saf_stop_resume.msg
+fx3_saf_status_states.msg
+fx3_saf_protective_field.msg
+fx3_saf_mode_switch.msg
 #  flexisoft_device_status.msg
 #  safety_field_and_mode.msg
 #  microscan3_field.msg
 #  flexisoft_function_safety.msg
 #  brake.msg
-#)
+)
 
 ## Generate services in the 'srv' folder
 add_service_files(FILES
