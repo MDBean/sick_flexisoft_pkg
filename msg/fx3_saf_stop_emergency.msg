@@ -1,4 +1,4 @@
-Header header
+
 bool EMERGENCY_EMC
 bool EMERGENCY_BUMPER
 bool EMERGENCY_PROXIMITY

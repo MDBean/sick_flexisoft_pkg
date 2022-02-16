@@ -1,4 +1,4 @@
-Header header
+
 bool PROTECTIVE_FIELD
 bool PROTECTIVE_MODE
 bool PROTECTIVE_FAULT

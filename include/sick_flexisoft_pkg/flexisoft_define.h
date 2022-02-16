@@ -185,6 +185,7 @@
 #define FX3_SAF_EMERGENCY_BUMPER	    1 , 18 , 6
 #define FX3_SAF_EMERGENCY_PROXIMITY	    1 , 18 , 5
 #define FX3_SAF_EMERGENCY_SHARED_EMC	    1 , 18 , 4
+#define FX3_SAF_STATUS_PRE_RESUME	    1 , 18 , 15
 #define FX3_SAF_STATUS_RUNNING	    1 , 18 , 11
 #define FX3_SAF_MUTE_RELEASE	    1 , 19 , 7
 #define FX3_SAF_ZONE_OPEATING	    1 , 19 , 3

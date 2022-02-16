@@ -64,11 +64,7 @@ add_message_files(
   fx3_saf_status_states.msg
   fx3_saf_protective_field.msg
   fx3_saf_mode_switch.msg
-#  flexisoft_device_status.msg
-#  safety_field_and_mode.msg
-#  microscan3_field.msg
-#  flexisoft_function_safety.msg
-#  brake.msg
+  fx3_saf_safety_system.msg
 )
 
 ## Generate services in the 'srv' folder

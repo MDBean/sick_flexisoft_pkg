@@ -1,4 +1,4 @@
-Header header
+
 bool STOP_STATES
 bool STOP_OPERATIONAL
 bool STOP_MANUAL

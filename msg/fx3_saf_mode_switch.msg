@@ -1,5 +1,6 @@
-Header header
-bool MODE_AUTO
-bool MODE_LOCK
-bool MODE_MAN
-bool MODE_SWITCH
+
+uint8 MODE
+uint8 MODE_AUTO = 1
+uint8 MODE_LOCK = 2
+uint8 MODE_MAN = 3
+uint8 MODE_SWITCH = 4

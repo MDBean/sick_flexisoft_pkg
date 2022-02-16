@@ -1,6 +1,7 @@
-Header header
-bool FIELD_PERSONAL
-bool FIELD_DETECT
-bool FIELD_WARN
-bool FIELD_BRAKER
-bool FIELD_POWER
+
+uint8 FIELD
+uint8 FIELD_PERSONAL = 5
+uint8 FIELD_DETECT = 4
+uint8 FIELD_WARN = 3
+uint8 FIELD_BRAKER = 2
+uint8 FIELD_POWER = 1

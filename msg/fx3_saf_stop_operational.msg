@@ -1,4 +1,4 @@
-Header header
+
 
 bool STOP_OPERATIONAL
 bool OPERATIONAL_OBSTACLE

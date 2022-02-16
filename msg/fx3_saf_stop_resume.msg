@@ -1,4 +1,5 @@
-Header header
+
+bool STOP_RESUME
 bool IO_START
 bool STOP_PROTECTIVE
 bool STOP_EMERGENCY

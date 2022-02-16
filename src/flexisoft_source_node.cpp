@@ -15,6 +15,7 @@
 #include <sick_flexisoft_pkg/fx3_saf_status_states.h>
 #include <sick_flexisoft_pkg/fx3_saf_protective_field.h>
 #include <sick_flexisoft_pkg/fx3_saf_mode_switch.h>
+#include <sick_flexisoft_pkg/fx3_saf_safety_system.h>
 
 clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
 
@@ -27,6 +28,7 @@ ros::Publisher fx3_saf_stop_resume_pub;
 ros::Publisher fx3_saf_status_states_pub;
 ros::Publisher fx3_saf_protective_field_pub;
 ros::Publisher fx3_saf_mode_switch_pub;
+ros::Publisher fx3_saf_safety_system_pub;
 
 sick_flexisoft_pkg::fx3_saf_protective_fault fx3_saf_protective_fault;
 sick_flexisoft_pkg::fx3_saf_stop_states fx3_saf_stop_states;
@@ -37,83 +39,105 @@ sick_flexisoft_pkg::fx3_saf_stop_resume fx3_saf_stop_resume;
 sick_flexisoft_pkg::fx3_saf_status_states fx3_saf_status_states;
 sick_flexisoft_pkg::fx3_saf_protective_field fx3_saf_protective_field;
 sick_flexisoft_pkg::fx3_saf_mode_switch fx3_saf_mode_switch;
+sick_flexisoft_pkg::fx3_saf_safety_system fx3_saf_safety_system;
 
 void fx3_saf_protective_fault_function_pub()
 {
-    fx3_saf_protective_fault.FAULT_EFI = true;
-    fx3_saf_protective_fault.FAULT_MS3 = true;
-    fx3_saf_protective_fault.FAULT_GENT = true;
-    fx3_saf_protective_fault.FAULT_EDM = true;
-    fx3_saf_protective_fault.FAULT_DRIVER = true;
-    fx3_saf_protective_fault.FAULT_ENC = true;
+    fx3_saf_protective_fault.FAULT_EFI = Flexisoft->read_bit(FX3_SAF_FAULT_EFI);
+    fx3_saf_protective_fault.FAULT_MS3 = Flexisoft->read_bit(FX3_SAF_FAULT_MS3);
+    fx3_saf_protective_fault.FAULT_GENT = Flexisoft->read_bit(FX3_SAF_FAULT_GENT);
+    fx3_saf_protective_fault.FAULT_EDM = Flexisoft->read_bit(FX3_SAF_FAULT_EDM);
+    fx3_saf_protective_fault.FAULT_DRIVER = Flexisoft->read_bit(FX3_SAF_FAULT_DRIVER);
+    fx3_saf_protective_fault.FAULT_ENC = Flexisoft->read_bit(FX3_SAF_FAULT_ENC);
 
     fx3_saf_protective_fault_pub.publish(fx3_saf_protective_fault);
 }
 void fx3_saf_stop_states_function_pub()
 {
-    fx3_saf_stop_states.STOP_STATES = true;
-    fx3_saf_stop_states.STOP_OPERATIONAL = true;
-    fx3_saf_stop_states.STOP_MANUAL = true;
-    fx3_saf_stop_states.STOP_PROTECTIVE = true;
-    fx3_saf_stop_states.STOP_EMERGENCY = true;
-    fx3_saf_stop_states.STOP_RESUME = true;
+    fx3_saf_stop_states.STOP_STATES = Flexisoft->read_bit(FX3_SAF_STOP_STATES);
+    fx3_saf_stop_states.STOP_OPERATIONAL = Flexisoft->read_bit(FX3_SAF_STOP_OPERATIONAL);
+    fx3_saf_stop_states.STOP_MANUAL = Flexisoft->read_bit(FX3_SAF_STOP_MANUAL);
+    fx3_saf_stop_states.STOP_PROTECTIVE = Flexisoft->read_bit(FX3_SAF_STOP_PROTECTIVE);
+    fx3_saf_stop_states.STOP_EMERGENCY = Flexisoft->read_bit(FX3_SAF_STOP_EMERGENCY);
+    fx3_saf_stop_states.STOP_RESUME = Flexisoft->read_bit(FX3_SAF_STOP_RESUME);
     fx3_saf_stop_states_pub.publish(fx3_saf_stop_states);
 }
 void fx3_saf_stop_operational_function_pub()
 {
-    fx3_saf_stop_operational.STOP_OPERATIONAL = true;
-    fx3_saf_stop_operational.OPERATIONAL_OBSTACLE = true;
+    fx3_saf_stop_operational.STOP_OPERATIONAL = Flexisoft->read_bit(FX3_SAF_STOP_OPERATIONAL);
+    fx3_saf_stop_operational.OPERATIONAL_OBSTACLE = Flexisoft->read_bit(FX3_SAF_OPERATIONAL_OBSTACLE);
 
     fx3_saf_stop_operational_pub.publish(fx3_saf_stop_operational);
 }
 void fx3_saf_stop_protective_function_pub()
 {
-    fx3_saf_stop_protective.PROTECTIVE_FIELD = true;
-    fx3_saf_stop_protective.PROTECTIVE_MODE = true;
-    fx3_saf_stop_protective.PROTECTIVE_FAULT = true;
-    fx3_saf_stop_protective.PROTECTIVE_OVERSPEED = true;
-    fx3_saf_stop_protective.PROTECTIVE_STABILITY = true;
-    fx3_saf_stop_protective.PROTECTIVE_SAFEGUARDED = true;
+    fx3_saf_stop_protective.PROTECTIVE_FIELD = Flexisoft->read_bit(FX3_SAF_PROTECTIVE_FIELD);
+    fx3_saf_stop_protective.PROTECTIVE_MODE = Flexisoft->read_bit(FX3_SAF_PROTECTIVE_MODE);
+    fx3_saf_stop_protective.PROTECTIVE_FAULT = Flexisoft->read_bit(FX3_SAF_PROTECTIVE_FAULT);
+    fx3_saf_stop_protective.PROTECTIVE_OVERSPEED = Flexisoft->read_bit(FX3_SAF_PROTECTIVE_OVERSPEED);
+    fx3_saf_stop_protective.PROTECTIVE_STABILITY = Flexisoft->read_bit(FX3_SAF_PROTECTIVE_STABILITY);
+    fx3_saf_stop_protective.PROTECTIVE_SAFEGUARDED = Flexisoft->read_bit(FX3_SAF_PROTECTIVE_SAFEGUARDED);
 
     fx3_saf_stop_protective_pub.publish(fx3_saf_stop_protective);
 }
 void fx3_saf_stop_emergency_function_pub()
 {
-    fx3_saf_stop_emergency.EMERGENCY_EMC = true;
-    fx3_saf_stop_emergency.EMERGENCY_BUMPER = true;
-    fx3_saf_stop_emergency.EMERGENCY_PROXIMITY = true;
-    fx3_saf_stop_emergency.EMERGENCY_SHARED_EMC = true;
+    fx3_saf_stop_emergency.EMERGENCY_EMC = Flexisoft->read_bit(FX3_SAF_EMERGENCY_EMC);
+    fx3_saf_stop_emergency.EMERGENCY_BUMPER = Flexisoft->read_bit(FX3_SAF_EMERGENCY_BUMPER);
+    fx3_saf_stop_emergency.EMERGENCY_PROXIMITY = Flexisoft->read_bit(FX3_SAF_EMERGENCY_PROXIMITY);
+    fx3_saf_stop_emergency.EMERGENCY_SHARED_EMC = Flexisoft->read_bit(FX3_SAF_EMERGENCY_SHARED_EMC);
     fx3_saf_stop_emergency_pub.publish(fx3_saf_stop_emergency);
 }
 void fx3_saf_stop_resume_function_pub()
 {
-    fx3_saf_stop_resume.IO_START = true;
-    fx3_saf_stop_resume.STOP_PROTECTIVE = true;
-    fx3_saf_stop_resume.STOP_EMERGENCY = true;
-    fx3_saf_stop_resume.STOP_MANUAL = true;
-    fx3_saf_stop_resume.MODE_LOCK = true;
+    fx3_saf_stop_resume.STOP_RESUME = Flexisoft->read_bit(FX3_SAF_STOP_RESUME);
+    fx3_saf_stop_resume.IO_START = Flexisoft->read_bit(M3_IN_IO_START);
+    fx3_saf_stop_resume.STOP_PROTECTIVE = Flexisoft->read_bit(FX3_SAF_STOP_PROTECTIVE);
+    fx3_saf_stop_resume.STOP_EMERGENCY = Flexisoft->read_bit(FX3_SAF_STOP_EMERGENCY);
+    fx3_saf_stop_resume.STOP_MANUAL = Flexisoft->read_bit(FX3_SAF_STOP_MANUAL);
+    fx3_saf_stop_resume.MODE_LOCK = Flexisoft->read_bit(M3_IN_IO_LOCK);
     fx3_saf_stop_resume_pub.publish(fx3_saf_stop_resume);
 }
 void fx3_saf_status_states_function_pub()
 {
-    fx3_saf_status_states.STATUS_PRE_RESUME = true;
-    fx3_saf_status_states.STATUS_RESUME = true;
-    fx3_saf_status_states.STATUS_RUNNING = true;
+    fx3_saf_status_states.STATUS_PRE_RESUME = Flexisoft->read_bit(FX3_SAF_STATUS_PRE_RESUME);
+    fx3_saf_status_states.STOP_RESUME = Flexisoft->read_bit(FX3_SAF_STOP_RESUME);
+    fx3_saf_status_states.STATUS_RUNNING = Flexisoft->read_bit(FX3_SAF_STATUS_RUNNING);
     fx3_saf_status_states_pub.publish(fx3_saf_status_states);
 }
 void fx3_saf_protective_field_function_pub()
 {
-    fx3_saf_protective_field.FIELD_POWER = true;
+    //fx3_saf_protective_field.FIELD_POWER = Flexisoft->read_bit();
     fx3_saf_protective_field_pub.publish(fx3_saf_protective_field);
 }
 void fx3_saf_mode_switch_function_pub()
 {
-    fx3_saf_mode_switch.MODE_AUTO = true;
-    fx3_saf_mode_switch.MODE_LOCK = true;
-    fx3_saf_mode_switch.MODE_MAN = true;
-    fx3_saf_mode_switch.MODE_SWITCH = true;
+    // fx3_saf_mode_switch.MODE_AUTO = Flexisoft->read_bit();
+    // fx3_saf_mode_switch.MODE_LOCK = Flexisoft->read_bit();
+    // fx3_saf_mode_switch.MODE_MAN = Flexisoft->read_bit();
+    // fx3_saf_mode_switch.MODE_SWITCH = Flexisoft->read_bit();
     fx3_saf_mode_switch_pub.publish(fx3_saf_mode_switch);
 }
+void fx3_saf_safety_system_function_pub()
+{
+    fx3_saf_safety_system.safety_ready = Flexisoft->read_bit(FX3_SAF_STOP_RESUME);
+    fx3_saf_safety_system.safety_good = Flexisoft->read_bit(FX3_SAF_STATUS_RUNNING);
+    fx3_saf_safety_system.muted_safety = Flexisoft->read_bit(FX3_SAF_MUTE_RELEASE);
+    fx3_saf_safety_system.operator_move = Flexisoft->read_bit(FX3_SAF_STOP_OPERATIONAL);
+
+    fx3_saf_safety_system.device_state.FAULT_EFI = Flexisoft->read_bit(FX3_SAF_FAULT_EFI);
+    fx3_saf_safety_system.device_state.FAULT_MS3 = Flexisoft->read_bit(FX3_SAF_FAULT_MS3);
+    fx3_saf_safety_system.device_state.FAULT_GENT = Flexisoft->read_bit(FX3_SAF_FAULT_GENT);
+    fx3_saf_safety_system.device_state.FAULT_EDM = Flexisoft->read_bit(FX3_SAF_FAULT_EDM);
+    fx3_saf_safety_system.device_state.FAULT_DRIVER = Flexisoft->read_bit(FX3_SAF_FAULT_DRIVER);
+    fx3_saf_safety_system.device_state.FAULT_ENC = Flexisoft->read_bit(FX3_SAF_FAULT_ENC);
+
+    fx3_saf_safety_system.mode_switch.MODE = 1;
+    fx3_saf_safety_system.field_safety.FIELD = 1;
+    fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
+}
+
+
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
                                         sick_flexisoft_pkg::FlexSetStopOperationalSrv::Response &res)
 {
@@ -232,6 +256,7 @@ int main(int argc, char **argv)
     fx3_saf_status_states_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_status_states>("/fx3_saf_status_states_pub", 10);
     fx3_saf_protective_field_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_protective_field>("/fx3_saf_protective_field_pub", 10);
     fx3_saf_mode_switch_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_mode_switch>("/fx3_saf_mode_switch_pub", 10);
+    fx3_saf_safety_system_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_safety_system>("/fx3_saf_safety_system_pub", 10);
 
     // sick_flexisoft_pkg::SAFE_SP_AGV SAFE_SP_AGV;
 
@@ -258,6 +283,7 @@ int main(int argc, char **argv)
             fx3_saf_status_states_function_pub();
             fx3_saf_protective_field_function_pub();
             fx3_saf_mode_switch_function_pub();
+            fx3_saf_safety_system_function_pub();
 
             Flexisoft->tcp_write_all();
 

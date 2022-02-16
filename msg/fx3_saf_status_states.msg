@@ -1,4 +1,4 @@
-Header header
+
 bool STATUS_PRE_RESUME
-bool STATUS_RESUME
+bool STOP_RESUME
 bool STATUS_RUNNING
