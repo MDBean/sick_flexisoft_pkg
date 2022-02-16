@@ -107,7 +107,7 @@ void fx3_saf_status_states_function_pub()
 }
 void fx3_saf_protective_field_function_pub()
 {
-    //fx3_saf_protective_field.FIELD_POWER = Flexisoft->read_bit();
+    // fx3_saf_protective_field.FIELD_POWER = Flexisoft->read_bit();
     fx3_saf_protective_field_pub.publish(fx3_saf_protective_field);
 }
 void fx3_saf_mode_switch_function_pub()
@@ -132,11 +132,42 @@ void fx3_saf_safety_system_function_pub()
     fx3_saf_safety_system.device_state.FAULT_DRIVER = Flexisoft->read_bit(FX3_SAF_FAULT_DRIVER);
     fx3_saf_safety_system.device_state.FAULT_ENC = Flexisoft->read_bit(FX3_SAF_FAULT_ENC);
 
-    fx3_saf_safety_system.mode_switch.MODE = 1;
-    fx3_saf_safety_system.field_safety.FIELD = 1;
+    // fx3_saf_safety_system.field_safety.FIELD = 1;
+    if (Flexisoft->read_bit(FX3_SAF_MODE_AUTO))
+    {
+        fx3_saf_safety_system.mode_switch.MODE = 1;
+    }
+    else if (Flexisoft->read_bit(FX3_SAF_MODE_LOCK))
+    {
+        fx3_saf_safety_system.mode_switch.MODE = 2;
+    }
+    else if (Flexisoft->read_bit(FX3_SAF_MODE_MAN))
+    {
+        fx3_saf_safety_system.mode_switch.MODE = 3;
+    }else{
+        fx3_saf_safety_system.mode_switch.MODE = 0;
+    }
+
+    if ((Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    {
+        fx3_saf_safety_system.field_safety.FIELD = 0;
+    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    {
+        fx3_saf_safety_system.field_safety.FIELD = 4;
+    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    {
+        fx3_saf_safety_system.field_safety.FIELD = 3;
+    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    {
+        fx3_saf_safety_system.field_safety.FIELD = 2;
+    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    {
+        fx3_saf_safety_system.field_safety.FIELD = 1;
+    }
+    
+
     fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
 }
-
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
                                         sick_flexisoft_pkg::FlexSetStopOperationalSrv::Response &res)
