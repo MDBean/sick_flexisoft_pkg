@@ -1,8 +1,9 @@
 Header header
 
-bool EFI
-bool MS3
-bool GENT
-bool EDM
-bool DRIVER
-bool ENC
+bool FAULT_EFI
+bool FAULT_MS3
+bool FAULT_GENT
+bool FAULT_EDM
+bool FAULT_DRIVER
+bool FAULT_ENC
+
