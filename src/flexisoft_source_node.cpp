@@ -174,11 +174,8 @@ void fx3_saf_safety_system_function_pub()
 }
 void fx3_io_start_mission_function_pub()
 {
-    // fx3_saf_mode_switch.MODE_AUTO = Flexisoft->read_bit();
-    // fx3_saf_mode_switch.MODE_LOCK = Flexisoft->read_bit();
-    // fx3_saf_mode_switch.MODE_MAN = Flexisoft->read_bit();
-    fx3_saf_mode_switch.MODE_SWITCH = Flexisoft->read_bit(M3_IN_IO_START_MISSION);
-    fx3_saf_mode_switch_pub.publish(fx3_saf_mode_switch);
+    fx3_io_start_mission.START_MISSION = Flexisoft->read_bit(M3_IN_IO_START_MISSION);
+    fx3_io_start_mission_pub.publish(fx3_io_start_mission);
 }
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
