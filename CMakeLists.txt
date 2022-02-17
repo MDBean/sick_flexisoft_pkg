@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   genmsg
+#  detect_obstacle
 #  actionlib_msgs
 #  actionlib
 #  agv_define
@@ -89,6 +90,7 @@ FlexSetMappingSrv.srv
 generate_messages(
   DEPENDENCIES
   std_msgs
+#  fields_safety
 #  actionlib_msgs
 )
 

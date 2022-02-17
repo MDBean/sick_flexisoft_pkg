@@ -17,7 +17,7 @@
 #include <sick_flexisoft_pkg/fx3_saf_mode_switch.h>
 #include <sick_flexisoft_pkg/fx3_saf_safety_system.h>
 
-#include <sick_flexisoft_pkg/fx3_io_start_mission.h>
+#include "detect_obstacle/fields_safety.h"
 
 clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
 
@@ -31,7 +31,9 @@ ros::Publisher fx3_saf_status_states_pub;
 ros::Publisher fx3_saf_protective_field_pub;
 ros::Publisher fx3_saf_mode_switch_pub;
 ros::Publisher fx3_saf_safety_system_pub;
-ros::Publisher fx3_io_start_mission_pub;
+
+
+
 
 sick_flexisoft_pkg::fx3_saf_protective_fault fx3_saf_protective_fault;
 sick_flexisoft_pkg::fx3_saf_stop_states fx3_saf_stop_states;
@@ -43,7 +45,8 @@ sick_flexisoft_pkg::fx3_saf_status_states fx3_saf_status_states;
 sick_flexisoft_pkg::fx3_saf_protective_field fx3_saf_protective_field;
 sick_flexisoft_pkg::fx3_saf_mode_switch fx3_saf_mode_switch;
 sick_flexisoft_pkg::fx3_saf_safety_system fx3_saf_safety_system;
-sick_flexisoft_pkg::fx3_io_start_mission fx3_io_start_mission;
+
+detect_obstacle::fields_safety fields_safety;
 
 void fx3_saf_protective_fault_function_pub()
 {
@@ -139,43 +142,60 @@ void fx3_saf_safety_system_function_pub()
     // fx3_saf_safety_system.field_safety.FIELD = 1;
     if (Flexisoft->read_bit(FX3_SAF_MODE_AUTO))
     {
-        fx3_saf_safety_system.mode_switch.MODE = 1;
+        fx3_saf_safety_system.mode_switch.MODE = 0;
     }
     else if (Flexisoft->read_bit(FX3_SAF_MODE_LOCK))
     {
-        fx3_saf_safety_system.mode_switch.MODE = 2;
+        fx3_saf_safety_system.mode_switch.MODE = 1;
     }
     else if (Flexisoft->read_bit(FX3_SAF_MODE_MAN))
     {
-        fx3_saf_safety_system.mode_switch.MODE = 3;
+        fx3_saf_safety_system.mode_switch.MODE = 2;
     }else{
-        fx3_saf_safety_system.mode_switch.MODE = 0;
+        fx3_saf_safety_system.mode_switch.MODE = 4;
     }
 
     if ((Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
-        fx3_saf_safety_system.field_safety.FIELD = 0;
+        fx3_saf_safety_system.laser_field.FIELD = 0;
     }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
-        fx3_saf_safety_system.field_safety.FIELD = 4;
+        fx3_saf_safety_system.laser_field.FIELD = 2;
     }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
-        fx3_saf_safety_system.field_safety.FIELD = 3;
+        fx3_saf_safety_system.laser_field.FIELD = 3;
     }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
-        fx3_saf_safety_system.field_safety.FIELD = 2;
+        fx3_saf_safety_system.laser_field.FIELD = 4;
     }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
-        fx3_saf_safety_system.field_safety.FIELD = 1;
+        fx3_saf_safety_system.laser_field.FIELD = 5;
     }
+
+        fx3_saf_safety_system.camera_field.FIELD = 0;
     
 
     fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
 }
-void fx3_io_start_mission_function_pub()
+
+void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety &m_fields_safety)
 {
-    fx3_io_start_mission.START_MISSION = Flexisoft->read_bit(M3_IN_IO_START_MISSION);
-    fx3_io_start_mission_pub.publish(fx3_io_start_mission);
+    // uint16_t st_io_action_Action = st_io_action.action;
+    // uint16_t st_io_action_State = st_io_action.state;
+    // uint16_t st_io_action_Status = agv_action_name.STATUS_SUCCEEDED;
+    // bool st_io_action_Load = false;
+    // float st_io_limit_trans = -0.14;
+    // float st_io_limit_theta = 0;
+    // bool *IPC_SAFE_SP_Limit;
+    // uint16_t st_speed_limit_SAFE_SP_Limit;
+
+    // agv_define::agv_action st_io_action_status;
+    // st_io_action_status = st_io_action;
+
+    // st_io_action_status.action = st_io_action_Action;
+    // st_io_action_status.status = st_io_action_Status;
+
+   
 }
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
@@ -297,7 +317,9 @@ int main(int argc, char **argv)
     fx3_saf_protective_field_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_protective_field>("/fx3_saf_protective_field_pub", 10);
     fx3_saf_mode_switch_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_mode_switch>("/fx3_saf_mode_switch_pub", 10);
     fx3_saf_safety_system_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_safety_system>("/fx3_saf_safety_system_pub", 10);
-    fx3_io_start_mission_pub = nh.advertise<sick_flexisoft_pkg::fx3_io_start_mission>("/fx3_io_start_mission_pub", 10);
+
+
+    ros::Subscriber depth_camera_fields_safety_sub = nh.subscribe("/depth_camera/fields_safety", 10, depth_camera_fields_safety_CallBack);
 
     // sick_flexisoft_pkg::SAFE_SP_AGV SAFE_SP_AGV;
 
@@ -325,7 +347,7 @@ int main(int argc, char **argv)
             fx3_saf_protective_field_function_pub();
             fx3_saf_mode_switch_function_pub();
             fx3_saf_safety_system_function_pub();
-            fx3_io_start_mission_function_pub();
+           
 
             Flexisoft->tcp_write_all();
 

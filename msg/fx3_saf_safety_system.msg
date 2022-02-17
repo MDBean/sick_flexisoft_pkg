@@ -5,4 +5,5 @@ bool operator_move
 
 fx3_saf_protective_fault device_state
 fx3_saf_mode_switch mode_switch
-fx3_saf_protective_field field_safety
+fx3_saf_protective_field laser_field
+fx3_saf_protective_field camera_field
