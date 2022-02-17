@@ -17,6 +17,8 @@
 #include <sick_flexisoft_pkg/fx3_saf_mode_switch.h>
 #include <sick_flexisoft_pkg/fx3_saf_safety_system.h>
 
+#include <sick_flexisoft_pkg/fx3_io_start_mission.h>
+
 clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
 
 ros::Publisher fx3_saf_protective_fault_pub;
@@ -29,6 +31,7 @@ ros::Publisher fx3_saf_status_states_pub;
 ros::Publisher fx3_saf_protective_field_pub;
 ros::Publisher fx3_saf_mode_switch_pub;
 ros::Publisher fx3_saf_safety_system_pub;
+ros::Publisher fx3_io_start_mission_pub;
 
 sick_flexisoft_pkg::fx3_saf_protective_fault fx3_saf_protective_fault;
 sick_flexisoft_pkg::fx3_saf_stop_states fx3_saf_stop_states;
@@ -40,6 +43,7 @@ sick_flexisoft_pkg::fx3_saf_status_states fx3_saf_status_states;
 sick_flexisoft_pkg::fx3_saf_protective_field fx3_saf_protective_field;
 sick_flexisoft_pkg::fx3_saf_mode_switch fx3_saf_mode_switch;
 sick_flexisoft_pkg::fx3_saf_safety_system fx3_saf_safety_system;
+sick_flexisoft_pkg::fx3_io_start_mission fx3_io_start_mission;
 
 void fx3_saf_protective_fault_function_pub()
 {
@@ -168,6 +172,14 @@ void fx3_saf_safety_system_function_pub()
 
     fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
 }
+void fx3_io_start_mission_function_pub()
+{
+    // fx3_saf_mode_switch.MODE_AUTO = Flexisoft->read_bit();
+    // fx3_saf_mode_switch.MODE_LOCK = Flexisoft->read_bit();
+    // fx3_saf_mode_switch.MODE_MAN = Flexisoft->read_bit();
+    fx3_saf_mode_switch.MODE_SWITCH = Flexisoft->read_bit(M3_IN_IO_START_MISSION);
+    fx3_saf_mode_switch_pub.publish(fx3_saf_mode_switch);
+}
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
                                         sick_flexisoft_pkg::FlexSetStopOperationalSrv::Response &res)
@@ -288,6 +300,7 @@ int main(int argc, char **argv)
     fx3_saf_protective_field_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_protective_field>("/fx3_saf_protective_field_pub", 10);
     fx3_saf_mode_switch_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_mode_switch>("/fx3_saf_mode_switch_pub", 10);
     fx3_saf_safety_system_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_safety_system>("/fx3_saf_safety_system_pub", 10);
+    fx3_io_start_mission_pub = nh.advertise<sick_flexisoft_pkg::fx3_io_start_mission>("/fx3_io_start_mission_pub", 10);
 
     // sick_flexisoft_pkg::SAFE_SP_AGV SAFE_SP_AGV;
 
@@ -315,6 +328,7 @@ int main(int argc, char **argv)
             fx3_saf_protective_field_function_pub();
             fx3_saf_mode_switch_function_pub();
             fx3_saf_safety_system_function_pub();
+            fx3_io_start_mission_function_pub();
 
             Flexisoft->tcp_write_all();
 

@@ -15,6 +15,7 @@
 #define M3_IN_IO_LOCK	    1 , 1 , 6
 #define M3_IN_IO_AUTO	    1 , 1 , 5
 #define M3_IN_IO_KEY_BRAKER	    1 , 1 , 4
+#define M3_IN_IO_START_MISSION	    1 , 1 , 3
 #define M3_IN_IO_RESET	    1 , 1 , 2
 #define M3_IN_IO_STOP	    1 , 1 , 1
 #define M3_IN_IO_START	    1 , 1 , 0
