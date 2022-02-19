@@ -285,6 +285,11 @@
 #define IPC_SAF_MAPPING_RELEASE	    2 , 1 , 0
 #define IPC_SAF_PAYLOAD_RELEASE	    2 , 1 , 8
 
+#define IPC_SAF_ZONE_RESTRICTED	    3 , 0 , 2
+#define IPC_SAF_ZONE_HAZARD	    3 , 0 , 1
+#define IPC_SAF_ZONE_OPEATING	    3 , 0 , 0
+
+
 
 	
 typedef enum SAFE_CASE_CTRL

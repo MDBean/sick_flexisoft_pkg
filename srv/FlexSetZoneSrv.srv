@@ -1,3 +1,8 @@
-bool STOP_OPERATIONAL 
+uint8 ZONE
+# ZONE = 0 
+# ZONE = 1 ZONE_OPEATING    Hoat dong binh thuong toc do toi da
+# ZONE = 2 ZONE_HAZARD      Hoat dong han che toc do 0.7m/s 
+# ZONE = 3 ZONE_RESTRICTED  Hoat dong nguy hiem han che toc do 0.3m/s vao sac hay chuyen hang hoa
+
 ---
 bool success

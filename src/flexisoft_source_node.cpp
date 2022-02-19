@@ -175,7 +175,7 @@ void fx3_saf_safety_system_function_pub()
         fx3_saf_safety_system.laser_field.FIELD = 5;
     }
 
-    fx3_saf_safety_system.camera_field.FIELD = 0;
+    //fx3_saf_safety_system.camera_field.FIELD = 0;
 
     fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
 }
@@ -222,17 +222,30 @@ void m5_out_enc_enable_id_function_pub()
 
 void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety)
 {
-    // uint16_t st_io_action_Action = st_io_action.action;
-    // uint16_t st_io_action_State = st_io_action.state;
-    // uint16_t st_io_action_Status = agv_action_name.STATUS_SUCCEEDED;
-    // bool st_io_action_Load = false;
-    // float st_io_limit_trans = -0.14;
-    // float st_io_limit_theta = 0;
-    // bool *IPC_SAFE_SP_Limit;
-    // uint16_t st_speed_limit_SAFE_SP_Limit;
 
     // agv_define::agv_action st_io_action_status;
     // st_io_action_status = st_io_action;
+    if(fields_safety.system_good==true){
+        if (fields_safety.enable==true)
+        {
+            if (fields_safety.fields[0]==true)
+            {
+                fx3_saf_safety_system.camera_field.FIELD = 2;
+            }else if (fields_safety.fields[1]==true)
+            {
+                fx3_saf_safety_system.camera_field.FIELD = 3;
+            }else if (fields_safety.fields[2]==true)
+            {
+                fx3_saf_safety_system.camera_field.FIELD = 4;
+            }else 
+            {
+               fx3_saf_safety_system.camera_field.FIELD = 0;
+            }
+            
+            
+        }
+        
+    }
 
     // st_io_action_status.action = st_io_action_Action;
     // st_io_action_status.status = st_io_action_Status;
@@ -253,7 +266,7 @@ bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperation
         }
         if (Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL) == req.STOP_OPERATIONAL)
         {
-            res.success = true; 
+            res.success = true;
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL));
             ROS_INFO(" FlexSetStopOperationalSrv done");
             return true;
@@ -261,30 +274,98 @@ bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperation
         //
         ros::Duration(0.1).sleep();
     }
+    res.success = false;
+    return false;
 }
 bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
                              sick_flexisoft_pkg::FlexSetZoneSrv::Response &res)
 {
-    // double secs;
-    // bool time_out = false;
-    // secs = ros::Time::now().toSec();
-    // Flexisoft->flex_write_bit(IPC_STOP_OPERATIONAL_RELEASE, req.STOP_OPERATIONAL);
-    // while (!time_out)
-    // {
-    //     if (ros::Time::now().toSec() - secs >= 3)
-    //     {
-    //         time_out = true;
-    //     }
-    //     if (Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL) == req.STOP_OPERATIONAL)
-    //     {
-    //         res.success = true; 
-    //         ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL));
-    //         ROS_INFO(" FlexSetStopOperationalSrv done");
-    //         return true;
-    //     }
-    //     //
-    //     ros::Duration(0.1).sleep();
-    // }
+    double secs;
+    bool time_out = false;
+    secs = ros::Time::now().toSec();
+    ROS_ERROR(" FlexSetZoneSrv [%x]", req.ZONE);
+    switch (req.ZONE)
+    {
+    case 1:
+        Flexisoft->write_bit(IPC_SAF_ZONE_OPEATING, true);
+        Flexisoft->write_bit(IPC_SAF_ZONE_HAZARD, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, false);
+        while (!time_out)
+        {
+            if (ros::Time::now().toSec() - secs >= 3)
+            {
+                time_out = true;
+            }
+
+            if (Flexisoft->flex_read_bit(FX3_SAF_ZONE_OPEATING) == true)
+            {
+                res.success = true;
+                ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_ZONE_OPEATING));
+                ROS_INFO(" FX3_SAF_ZONE_OPEATING done");
+                return true;
+            }
+            //
+            ros::Duration(0.1).sleep();
+        }
+        res.success = false;
+        return false;
+        break;
+    case 2:
+        ROS_ERROR(" FlexSetZoneSrv ======= 2");
+        Flexisoft->write_bit(IPC_SAF_ZONE_OPEATING, false);
+        Flexisoft->write_bit(IPC_SAF_ZONE_HAZARD, true);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, false);
+        ROS_ERROR(" FlexSetZoneSrv ======= 2 ING");
+        while (!time_out)
+        {
+            if (ros::Time::now().toSec() - secs >= 3)
+            {
+                time_out = true;
+            }
+
+            if (Flexisoft->flex_read_bit(FX3_SAF_ZONE_HAZARD) == true)
+            {
+                res.success = true;
+                ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_ZONE_HAZARD));
+                ROS_INFO(" FX3_SAF_ZONE_HAZARD done");
+                return true;
+            }
+            
+            ros::Duration(0.1).sleep();
+        }
+        ROS_ERROR(" FlexSetZoneSrv ======= 2 ED");
+        res.success = false;
+        // return false;
+        break;
+    case 3:
+        ROS_ERROR(" FlexSetZoneSrv ======= 3");
+        Flexisoft->write_bit(IPC_SAF_ZONE_OPEATING, false);
+        Flexisoft->write_bit(IPC_SAF_ZONE_HAZARD, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, true);
+        while (!time_out)
+        {
+            if (ros::Time::now().toSec() - secs >= 3)
+            {
+                time_out = true;
+            }
+
+            if (Flexisoft->flex_read_bit(FX3_SAF_ZONE_RESTRICTED) == true)
+            {
+                res.success = true;
+                ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_ZONE_RESTRICTED));
+                ROS_INFO(" FX3_SAF_ZONE_RESTRICTED done");
+                return true;
+            }
+            //
+            ros::Duration(0.1).sleep();
+        }
+        res.success = false;
+       // return false;
+        break;
+
+    default:
+        break;
+    }
 }
 bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Request &req,
                                     sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Response &res)
@@ -301,7 +382,7 @@ bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::R
         }
         if (Flexisoft->flex_read_bit(FX3_SAF_MUTE_RELEASE) == req.MUTE_RELEASE)
         {
-            res.success = true; 
+            res.success = true;
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_MUTE_RELEASE));
             ROS_INFO(" FlexSetMuteReleaseSrv done");
             return true;
@@ -309,6 +390,8 @@ bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::R
         //
         ros::Duration(0.1).sleep();
     }
+    res.success = false;
+    return false;
 }
 bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
                                 sick_flexisoft_pkg::FlexSetPayloadSrv::Response &res)
@@ -325,7 +408,7 @@ bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &
         }
         if (Flexisoft->flex_read_bit(FX3_SAF_PAYLOAD_RELEASE) == req.PAYLOAD_RELEASE)
         {
-            res.success = true; 
+            res.success = true;
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_PAYLOAD_RELEASE));
             ROS_INFO(" FlexSetPayloadSrv done");
             return true;
@@ -333,6 +416,8 @@ bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &
         //
         ros::Duration(0.1).sleep();
     }
+    res.success = false;
+    return false;
 }
 bool ServiceCbFlexSetMappingSrv(sick_flexisoft_pkg::FlexSetMappingSrv::Request &req,
                                 sick_flexisoft_pkg::FlexSetMappingSrv::Response &res)
@@ -349,7 +434,7 @@ bool ServiceCbFlexSetMappingSrv(sick_flexisoft_pkg::FlexSetMappingSrv::Request &
         }
         if (Flexisoft->flex_read_bit(FX3_SAF_MAPPING_RELEASE) == req.MAPPING_RELEASE)
         {
-            res.success = true; 
+            res.success = true;
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_MAPPING_RELEASE));
             ROS_INFO(" FlexSetMappingSrv done");
             return true;
@@ -357,6 +442,8 @@ bool ServiceCbFlexSetMappingSrv(sick_flexisoft_pkg::FlexSetMappingSrv::Request &
         //
         ros::Duration(0.1).sleep();
     }
+    res.success = false;
+    return false;
 }
 
 int main(int argc, char **argv)
@@ -395,28 +482,26 @@ int main(int argc, char **argv)
         {
             ROS_INFO("FLEXISOFT CONNECTING....");
             Flexisoft->connect();
-            
         }
         while (ros::ok() && Flexisoft->connected)
         {
             /* code */
-           
-            Flexisoft->tcp_read(DATA_SET_01);
 
-            fx3_saf_protective_fault_function_pub();
-            fx3_saf_stop_states_function_pub();
-            fx3_saf_stop_operational_function_pub();
-            fx3_saf_stop_protective_function_pub();
-            fx3_saf_stop_emergency_function_pub();
-            fx3_saf_stop_resume_function_pub();
-            fx3_saf_status_states_function_pub();
-            fx3_saf_protective_field_function_pub();
-            fx3_saf_mode_switch_function_pub();
-            fx3_saf_safety_system_function_pub();
-            m5_out_enc_enable_id_function_pub();
+            // Flexisoft->tcp_read(DATA_SET_01);
 
+            // fx3_saf_protective_fault_function_pub();
+            // fx3_saf_stop_states_function_pub();
+            // fx3_saf_stop_operational_function_pub();
+            // fx3_saf_stop_protective_function_pub();
+            // fx3_saf_stop_emergency_function_pub();
+            // fx3_saf_stop_resume_function_pub();
+            // fx3_saf_status_states_function_pub();
+            // fx3_saf_protective_field_function_pub();
+            // fx3_saf_mode_switch_function_pub();
+            // fx3_saf_safety_system_function_pub();
+            // m5_out_enc_enable_id_function_pub();
 
-             Flexisoft->tcp_write_all();
+            Flexisoft->tcp_write_all();
 
             ros::spinOnce();
             loop_rate.sleep();
