@@ -487,19 +487,19 @@ int main(int argc, char **argv)
         {
             /* code */
 
-            // Flexisoft->tcp_read(DATA_SET_01);
+            Flexisoft->tcp_read(DATA_SET_01);
 
-            // fx3_saf_protective_fault_function_pub();
-            // fx3_saf_stop_states_function_pub();
-            // fx3_saf_stop_operational_function_pub();
-            // fx3_saf_stop_protective_function_pub();
-            // fx3_saf_stop_emergency_function_pub();
-            // fx3_saf_stop_resume_function_pub();
-            // fx3_saf_status_states_function_pub();
-            // fx3_saf_protective_field_function_pub();
-            // fx3_saf_mode_switch_function_pub();
-            // fx3_saf_safety_system_function_pub();
-            // m5_out_enc_enable_id_function_pub();
+            fx3_saf_protective_fault_function_pub();
+            fx3_saf_stop_states_function_pub();
+            fx3_saf_stop_operational_function_pub();
+            fx3_saf_stop_protective_function_pub();
+            fx3_saf_stop_emergency_function_pub();
+            fx3_saf_stop_resume_function_pub();
+            fx3_saf_status_states_function_pub();
+            fx3_saf_protective_field_function_pub();
+            fx3_saf_mode_switch_function_pub();
+            fx3_saf_safety_system_function_pub();
+            m5_out_enc_enable_id_function_pub();
 
             Flexisoft->tcp_write_all();
 
