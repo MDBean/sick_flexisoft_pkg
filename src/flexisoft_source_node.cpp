@@ -21,7 +21,7 @@
 #include "detect_obstacle/fields_safety.h"
 
 // clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
-clientSock *Flexisoft = new clientSock("10.147.20.101", 1100, true);
+clientSock *Flexisoft = new clientSock("10.147.20.100", 1100, true);
 ros::Publisher fx3_saf_protective_fault_pub;
 ros::Publisher fx3_saf_stop_states_pub;
 ros::Publisher fx3_saf_stop_operational_pub;
@@ -223,29 +223,25 @@ void m5_out_enc_enable_id_function_pub()
 void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::ConstPtr& msg)
 {
 
-    ROS_INFO("fields_safety.system_good: [%x]", msg->system_good);
-    ROS_INFO("fields_safety.enable: [%x]", msg->enable);
-    ROS_INFO("fields_safety.fields[1]: [%x]", msg->fields[0]);
-    // ROS_INFO("fields_safety.fields[2]: [%x]", msg->fields[1]);
-    // ROS_INFO("fields_safety.fields[3]: [%x]", msg->fields[2]);
+
     if(msg->system_good==true){
         if (msg->enable==true)
         {
             if (msg->fields[0]==true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 2;
-                ROS_INFO("===fields_safety.fields[3]: [%x]", msg->fields[0]);
+
              }else if (msg->fields[1]==true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 3;
-                ROS_INFO("===msg->fields[3]: [%x]", msg->fields[2]);
+ 
             }else if (msg->fields[2]==true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 4;
             }else 
             {
                fx3_saf_safety_system.camera_field.FIELD = 0;
-               ROS_INFO("===msg->fields[3]: [%x]", msg->fields[2]);
+
             }
             
             
