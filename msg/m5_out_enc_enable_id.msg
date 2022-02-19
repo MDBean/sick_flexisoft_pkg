@@ -1,1 +1,1 @@
-uint8 SPEED
+float32 SPEED
