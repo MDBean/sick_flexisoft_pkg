@@ -223,23 +223,29 @@ void m5_out_enc_enable_id_function_pub()
 void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety)
 {
 
-    // agv_define::agv_action st_io_action_status;
-    // st_io_action_status = st_io_action;
+    ROS_INFO("fields_safety.system_good: [%x]", fields_safety.system_good);
+    ROS_INFO("fields_safety.enable: [%x]", fields_safety.enable);
+    ROS_INFO("fields_safety.fields[1]: [%x]", fields_safety.fields[0]);
+    ROS_INFO("fields_safety.fields[2]: [%x]", fields_safety.fields[1]);
+    ROS_INFO("fields_safety.fields[3]: [%x]", fields_safety.fields[2]);
     if(fields_safety.system_good==true){
         if (fields_safety.enable==true)
         {
             if (fields_safety.fields[0]==true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 2;
+                ROS_INFO("===fields_safety.fields[3]: [%x]", fields_safety.fields[2]);
             }else if (fields_safety.fields[1]==true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 3;
+                ROS_INFO("===fields_safety.fields[3]: [%x]", fields_safety.fields[2]);
             }else if (fields_safety.fields[2]==true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 4;
             }else 
             {
                fx3_saf_safety_system.camera_field.FIELD = 0;
+               ROS_INFO("===fields_safety.fields[3]: [%x]", fields_safety.fields[2]);
             }
             
             
