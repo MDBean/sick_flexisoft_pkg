@@ -21,7 +21,7 @@
 #include "detect_obstacle/fields_safety.h"
 
 // clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
-clientSock *Flexisoft = new clientSock("10.147.20.100", 1100, true);
+clientSock *Flexisoft = new clientSock("10.147.20.101", 1100, true);
 ros::Publisher fx3_saf_protective_fault_pub;
 ros::Publisher fx3_saf_stop_states_pub;
 ros::Publisher fx3_saf_stop_operational_pub;
@@ -175,7 +175,7 @@ void fx3_saf_safety_system_function_pub()
         fx3_saf_safety_system.laser_field.FIELD = 5;
     }
 
-    fx3_saf_safety_system.camera_field.FIELD = 0;
+    
 
     fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
 }
