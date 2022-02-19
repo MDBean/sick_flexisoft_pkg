@@ -238,9 +238,11 @@ void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::C
             }else if (msg->fields[2]==true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 4;
+                Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, true);
             }else 
             {
                fx3_saf_safety_system.camera_field.FIELD = 0;
+               Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
 
             }
             
