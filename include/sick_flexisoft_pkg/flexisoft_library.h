@@ -19,7 +19,7 @@
 #include <sys/signal.h>
 
 #include <ros/ros.h>
-
+#include <boost/thread.hpp>
 #include <sstream>
 
 
@@ -139,6 +139,7 @@ typedef enum ERROR_CONNECT
 class clientSock {
   public:
     clientSock(string host, unsigned int port);
+    clientSock(string host, unsigned int port,bool automsg);
     clientSock();
     clientSock(int sock);
     ~clientSock();
@@ -173,7 +174,7 @@ class clientSock {
 
     int tcp_read(uint8_t data_set);
     int tcp_write( uint8_t data_set);
-
+  int tcp_auto_read( uint8_t data_set);
     int flex_write_bit(uint8_t data_set, int address_word, int address_bit, const bool value);
     bool flex_read_bit(uint8_t data_set,int address_word, int address_bit);
     //void print_data(int func, uint8_t data_set);
@@ -187,6 +188,7 @@ class clientSock {
     string host;
     unsigned int port;
     bool connected;
+
 
   protected:
 

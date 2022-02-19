@@ -16,11 +16,12 @@
 #include <sick_flexisoft_pkg/fx3_saf_protective_field.h>
 #include <sick_flexisoft_pkg/fx3_saf_mode_switch.h>
 #include <sick_flexisoft_pkg/fx3_saf_safety_system.h>
+#include <sick_flexisoft_pkg/m5_out_enc_enable_id.h>
 
 #include "detect_obstacle/fields_safety.h"
 
-clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
-
+// clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
+clientSock *Flexisoft = new clientSock("10.147.20.100", 1101, true);
 ros::Publisher fx3_saf_protective_fault_pub;
 ros::Publisher fx3_saf_stop_states_pub;
 ros::Publisher fx3_saf_stop_operational_pub;
@@ -31,9 +32,7 @@ ros::Publisher fx3_saf_status_states_pub;
 ros::Publisher fx3_saf_protective_field_pub;
 ros::Publisher fx3_saf_mode_switch_pub;
 ros::Publisher fx3_saf_safety_system_pub;
-
-
-
+ros::Publisher m5_out_enc_enable_id_pub;
 
 sick_flexisoft_pkg::fx3_saf_protective_fault fx3_saf_protective_fault;
 sick_flexisoft_pkg::fx3_saf_stop_states fx3_saf_stop_states;
@@ -45,6 +44,7 @@ sick_flexisoft_pkg::fx3_saf_status_states fx3_saf_status_states;
 sick_flexisoft_pkg::fx3_saf_protective_field fx3_saf_protective_field;
 sick_flexisoft_pkg::fx3_saf_mode_switch fx3_saf_mode_switch;
 sick_flexisoft_pkg::fx3_saf_safety_system fx3_saf_safety_system;
+sick_flexisoft_pkg::m5_out_enc_enable_id m5_out_enc_enable_id;
 
 detect_obstacle::fields_safety fields_safety;
 
@@ -119,10 +119,7 @@ void fx3_saf_protective_field_function_pub()
 }
 void fx3_saf_mode_switch_function_pub()
 {
-    // fx3_saf_mode_switch.MODE_AUTO = Flexisoft->read_bit();
-    // fx3_saf_mode_switch.MODE_LOCK = Flexisoft->read_bit();
-    // fx3_saf_mode_switch.MODE_MAN = Flexisoft->read_bit();
-    // fx3_saf_mode_switch.MODE_SWITCH = Flexisoft->read_bit();
+
     fx3_saf_mode_switch_pub.publish(fx3_saf_mode_switch);
 }
 void fx3_saf_safety_system_function_pub()
@@ -151,34 +148,79 @@ void fx3_saf_safety_system_function_pub()
     else if (Flexisoft->read_bit(FX3_SAF_MODE_MAN))
     {
         fx3_saf_safety_system.mode_switch.MODE = 2;
-    }else{
+    }
+    else
+    {
         fx3_saf_safety_system.mode_switch.MODE = 4;
     }
 
-    if ((Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    if ((Flexisoft->read_bit(FX3_SAF_MS3_DETECTER)) && (Flexisoft->read_bit(FX3_SAF_MS3_WARNER)) && (Flexisoft->read_bit(FX3_SAF_MS3_BRACKER)) && (Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
         fx3_saf_safety_system.laser_field.FIELD = 0;
-    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    }
+    else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER)) && (Flexisoft->read_bit(FX3_SAF_MS3_WARNER)) && (Flexisoft->read_bit(FX3_SAF_MS3_BRACKER)) && (Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
         fx3_saf_safety_system.laser_field.FIELD = 2;
-    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    }
+    else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER)) && !(Flexisoft->read_bit(FX3_SAF_MS3_WARNER)) && (Flexisoft->read_bit(FX3_SAF_MS3_BRACKER)) && (Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
         fx3_saf_safety_system.laser_field.FIELD = 3;
-    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    }
+    else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER)) && !(Flexisoft->read_bit(FX3_SAF_MS3_WARNER)) && !(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER)) && (Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
         fx3_saf_safety_system.laser_field.FIELD = 4;
-    }else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_WARNER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER))&&!(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
+    }
+    else if (!(Flexisoft->read_bit(FX3_SAF_MS3_DETECTER)) && !(Flexisoft->read_bit(FX3_SAF_MS3_WARNER)) && !(Flexisoft->read_bit(FX3_SAF_MS3_BRACKER)) && !(Flexisoft->read_bit(FX3_SAF_MS3_POWER)))
     {
         fx3_saf_safety_system.laser_field.FIELD = 5;
     }
 
-        fx3_saf_safety_system.camera_field.FIELD = 0;
-    
+    fx3_saf_safety_system.camera_field.FIELD = 0;
 
     fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
 }
+void m5_out_enc_enable_id_function_pub()
+{
+    uint8_t speedTarget = Flexisoft->read_half_byte(M5_OUT_ENC_ENABLE_ID_00);
+    ROS_INFO("--------------: [%d]", speedTarget);
+    switch (speedTarget)
+    {
+    case 1:
+        m5_out_enc_enable_id.SPEED = 40;
+        break;
+    case 2:
+        m5_out_enc_enable_id.SPEED = 80;
+        break;
+    case 3:
+        m5_out_enc_enable_id.SPEED = 160;
+        break;
+    case 4:
+        m5_out_enc_enable_id.SPEED = 320;
+        break;
+    case 5:
+        m5_out_enc_enable_id.SPEED = 640;
+        break;
+    case 6:
+        m5_out_enc_enable_id.SPEED = 960;
+        break;
+    case 7:
+        m5_out_enc_enable_id.SPEED = 1280;
+        break;
+    case 8:
+        m5_out_enc_enable_id.SPEED = 1600;
+        break;
 
-void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety &m_fields_safety)
+    default:
+        m5_out_enc_enable_id.SPEED = 0;
+        break;
+    }
+
+    ROS_INFO("m5_out_enc_enable_id: [%d]", m5_out_enc_enable_id.SPEED);
+
+    m5_out_enc_enable_id_pub.publish(m5_out_enc_enable_id);
+}
+
+void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety)
 {
     // uint16_t st_io_action_Action = st_io_action.action;
     // uint16_t st_io_action_State = st_io_action.state;
@@ -194,110 +236,133 @@ void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety &m
 
     // st_io_action_status.action = st_io_action_Action;
     // st_io_action_status.status = st_io_action_Status;
-
-   
 }
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
                                         sick_flexisoft_pkg::FlexSetStopOperationalSrv::Response &res)
 {
-    for (size_t i = 0; i < 10; i++)
+    double secs;
+    bool time_out = false;
+    secs = ros::Time::now().toSec();
+    Flexisoft->flex_write_bit(IPC_STOP_OPERATIONAL_RELEASE, req.STOP_OPERATIONAL);
+    while (!time_out)
     {
-        ROS_INFO("STEP %d", i);
-        Flexisoft->flex_write_bit(IPC_STOP_OPERATIONAL_RELEASE, req.STOP_OPERATIONAL);
-        if ((Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL)) == req.STOP_OPERATIONAL)
+        if (ros::Time::now().toSec() - secs >= 3)
         {
-            res.success = true;
-            ROS_INFO(" ");
+            time_out = true;
+        }
+        if (Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL) == req.STOP_OPERATIONAL)
+        {
+            res.success = true; 
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL));
             ROS_INFO(" FlexSetStopOperationalSrv done");
             return true;
         }
+        //
+        ros::Duration(0.1).sleep();
     }
-    res.success = false;
-    ROS_INFO("FlexSetStopOperationalSrv false");
-    return true;
 }
 bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
                              sick_flexisoft_pkg::FlexSetZoneSrv::Response &res)
 {
-    for (size_t i = 0; i < 10; i++)
-    {
-        Flexisoft->flex_write_bit(IPC_STOP_OPERATIONAL_RELEASE, req.STOP_OPERATIONAL);
-        if ((Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL)) == req.STOP_OPERATIONAL)
-        {
-            res.success = true;
-            ROS_INFO(" ");
-            ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL));
-            ROS_INFO(" FlexSetZoneSrv done");
-            return true;
-        }
-    }
-    res.success = false;
-    ROS_INFO("FlexSetZoneSrv false");
-    return true;
+    // double secs;
+    // bool time_out = false;
+    // secs = ros::Time::now().toSec();
+    // Flexisoft->flex_write_bit(IPC_STOP_OPERATIONAL_RELEASE, req.STOP_OPERATIONAL);
+    // while (!time_out)
+    // {
+    //     if (ros::Time::now().toSec() - secs >= 3)
+    //     {
+    //         time_out = true;
+    //     }
+    //     if (Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL) == req.STOP_OPERATIONAL)
+    //     {
+    //         res.success = true; 
+    //         ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_STOP_OPERATIONAL));
+    //         ROS_INFO(" FlexSetStopOperationalSrv done");
+    //         return true;
+    //     }
+    //     //
+    //     ros::Duration(0.1).sleep();
+    // }
 }
 bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Request &req,
                                     sick_flexisoft_pkg::FlexSetMuteReleaseSrv::Response &res)
 {
-    for (size_t i = 0; i < 10; i++)
+    double secs;
+    bool time_out = false;
+    secs = ros::Time::now().toSec();
+    Flexisoft->flex_write_bit(IPC_SAF_MUTE_RELEASE, req.MUTE_RELEASE);
+    while (!time_out)
     {
-        Flexisoft->flex_write_bit(IPC_SAF_MUTE_RELEASE, req.MUTE_RELEASE);
-        if ((Flexisoft->flex_read_bit(FX3_SAF_MUTE_RELEASE)) == req.MUTE_RELEASE)
+        if (ros::Time::now().toSec() - secs >= 3)
         {
-            res.success = true;
-            ROS_INFO(" ");
+            time_out = true;
+        }
+        if (Flexisoft->flex_read_bit(FX3_SAF_MUTE_RELEASE) == req.MUTE_RELEASE)
+        {
+            res.success = true; 
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_MUTE_RELEASE));
             ROS_INFO(" FlexSetMuteReleaseSrv done");
             return true;
         }
+        //
+        ros::Duration(0.1).sleep();
     }
-    res.success = false;
-    ROS_INFO("FlexSetMuteReleaseSrv false");
-    return true;
 }
 bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
                                 sick_flexisoft_pkg::FlexSetPayloadSrv::Response &res)
 {
-    for (size_t i = 0; i < 10; i++)
+    double secs;
+    bool time_out = false;
+    secs = ros::Time::now().toSec();
+    Flexisoft->flex_write_bit(IPC_SAF_PAYLOAD_RELEASE, req.PAYLOAD_RELEASE);
+    while (!time_out)
     {
-        Flexisoft->flex_write_bit(IPC_SAF_PAYLOAD_RELEASE, req.PAYLOAD_RELEASE);
-        if ((Flexisoft->flex_read_bit(FX3_SAF_PAYLOAD_RELEASE)) == req.PAYLOAD_RELEASE)
+        if (ros::Time::now().toSec() - secs >= 3)
         {
-            res.success = true;
-            ROS_INFO(" ");
+            time_out = true;
+        }
+        if (Flexisoft->flex_read_bit(FX3_SAF_PAYLOAD_RELEASE) == req.PAYLOAD_RELEASE)
+        {
+            res.success = true; 
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_PAYLOAD_RELEASE));
             ROS_INFO(" FlexSetPayloadSrv done");
             return true;
         }
+        //
+        ros::Duration(0.1).sleep();
     }
-    res.success = false;
-    ROS_INFO("FlexSetPayloadSrv false");
-    return true;
 }
 bool ServiceCbFlexSetMappingSrv(sick_flexisoft_pkg::FlexSetMappingSrv::Request &req,
                                 sick_flexisoft_pkg::FlexSetMappingSrv::Response &res)
 {
-    for (size_t i = 0; i < 10; i++)
+    double secs;
+    bool time_out = false;
+    secs = ros::Time::now().toSec();
+    Flexisoft->flex_write_bit(IPC_SAF_MAPPING_RELEASE, req.MAPPING_RELEASE);
+    while (!time_out)
     {
-        Flexisoft->flex_write_bit(IPC_SAF_MAPPING_RELEASE, req.MAPPING_RELEASE);
-        if ((Flexisoft->flex_read_bit(FX3_SAF_MAPPING_RELEASE)) == req.MAPPING_RELEASE)
+        if (ros::Time::now().toSec() - secs >= 3)
         {
-            res.success = true;
-            ROS_INFO(" ");
+            time_out = true;
+        }
+        if (Flexisoft->flex_read_bit(FX3_SAF_MAPPING_RELEASE) == req.MAPPING_RELEASE)
+        {
+            res.success = true; 
             ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_MAPPING_RELEASE));
             ROS_INFO(" FlexSetMappingSrv done");
             return true;
         }
+        //
+        ros::Duration(0.1).sleep();
     }
-    res.success = false;
-    ROS_INFO("FlexSetMappingSrv false");
-    return true;
 }
 
 int main(int argc, char **argv)
 {
 
+    ROS_INFO("FLEXISOFT CONNECTING....");
     ros::init(argc, argv, "safety_function");
     ros::NodeHandle nh;
 
@@ -317,7 +382,7 @@ int main(int argc, char **argv)
     fx3_saf_protective_field_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_protective_field>("/fx3_saf_protective_field_pub", 10);
     fx3_saf_mode_switch_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_mode_switch>("/fx3_saf_mode_switch_pub", 10);
     fx3_saf_safety_system_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_safety_system>("/fx3_saf_safety_system_pub", 10);
-
+    m5_out_enc_enable_id_pub = nh.advertise<sick_flexisoft_pkg::m5_out_enc_enable_id>("/m5_out_enc_enable_id_pub", 10);
 
     ros::Subscriber depth_camera_fields_safety_sub = nh.subscribe("/depth_camera/fields_safety", 10, depth_camera_fields_safety_CallBack);
 
@@ -328,13 +393,14 @@ int main(int argc, char **argv)
     {
         if (!Flexisoft->connected)
         {
-            Flexisoft->connect();
             ROS_INFO("FLEXISOFT CONNECTING....");
+            Flexisoft->connect();
+            
         }
         while (ros::ok() && Flexisoft->connected)
         {
             /* code */
-
+           
             Flexisoft->tcp_read(DATA_SET_01);
 
             fx3_saf_protective_fault_function_pub();
@@ -347,9 +413,10 @@ int main(int argc, char **argv)
             fx3_saf_protective_field_function_pub();
             fx3_saf_mode_switch_function_pub();
             fx3_saf_safety_system_function_pub();
-           
+            m5_out_enc_enable_id_function_pub();
 
-            Flexisoft->tcp_write_all();
+
+             Flexisoft->tcp_write_all();
 
             ros::spinOnce();
             loop_rate.sleep();

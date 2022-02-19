@@ -1,13 +1,26 @@
 #include "sick_flexisoft_pkg/flexisoft_library.h"
 
-
-
 clientSock::clientSock(string host, unsigned int port)
 {
     int t = 0;
     HOST_IP = host;
     PORT_IP = port;
     connect();
+}
+
+void *task1(void *arg)
+{
+    clientSock *client = (clientSock *)arg;
+    client->tcp_auto_read(1);
+}
+
+clientSock::clientSock(string host, unsigned int port, bool automsg)
+{
+    int t = 0;
+    HOST_IP = host;
+    PORT_IP = port;
+    connect();
+    //  tcp_auto_read(1);
 }
 
 clientSock::clientSock()
@@ -23,7 +36,7 @@ clientSock::clientSock(int sock)
 
 clientSock::~clientSock()
 {
-    //disconnect();
+    // disconnect();
 }
 
 int clientSock::connect()
@@ -52,7 +65,7 @@ int clientSock::connect()
     enable_keepalive(sockfd);
 
     for (size_t i = 0; i < 10; i++)
-    { //try to connect 10 times
+    { // try to connect 10 times
         if (::connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
             cout << "Error on connecting: " << errno << "  " << strerror(errno) << endl;
         else
@@ -131,7 +144,7 @@ int clientSock::write(string mesg)
     FD_ZERO(&writefds);
     FD_SET(sockfd, &writefds);
 
-    //cout << "w: " << mesg << endl;
+    // cout << "w: " << mesg << endl;
 
     int sentBytes = 0;
 
@@ -164,7 +177,6 @@ int clientSock::write(string mesg)
     cout << "STOP-START" << endl;
     return 0;
 }
-
 
 bool clientSock::read_bit(uint8_t data_set, int address_word, int address_bit)
 {
@@ -288,7 +300,7 @@ int clientSock::write_bit(uint8_t data_set, int address_word, int address_bit, c
     break;
     case DATA_SET_02:
     {
-        output_data_set_02[address_word] = ((output_data_set_02[address_word] & (uint16_t)(~(1 << address_bit)) |(((int)value) << address_bit)));
+        output_data_set_02[address_word] = ((output_data_set_02[address_word] & (uint16_t)(~(1 << address_bit)) | (((int)value) << address_bit)));
 
         return true;
     }
@@ -437,7 +449,6 @@ void clientSock::build_request(uint16_t *to_send, int func, bool data_set_01, bo
         if (data_set_01 == true)
         {
             to_send[1] = PARA_READ_INPUT_DATA_SET_01;
-            
         }
         else
         {
@@ -620,7 +631,6 @@ int clientSock::tcp_read(uint8_t data_set)
                 for (size_t i = 0; i < (int)PARA_READ_INPUT_LENGTH_SET_01 / 2; i++)
                 {
                     intput_data_set_01[i] = flip_word(to_rec[i + 5]);
-                    
 
                     /* code */
                 }
@@ -660,11 +670,90 @@ int clientSock::tcp_read(uint8_t data_set)
         }
     }
 }
+int clientSock::tcp_auto_read(uint8_t data_set)
+{
+    // request_read(data_set);
+    while (true)
+    {
+        int MAX_LENGTH;
+        if (data_set == DATA_SET_01)
+        {
+            MAX_LENGTH = PARA_READ_INPUT_LENGTH_SET_01 / 2 + PARA_READ_INPUT_LENGTH / 2;
+        }
+        else if (data_set == DATA_SET_02)
+        {
+            MAX_LENGTH = PARA_READ_INPUT_LENGTH_SET_02 / 2 + PARA_READ_INPUT_LENGTH / 2;
+        }
+        else if (data_set == DATA_SET_03)
+        {
+            MAX_LENGTH = PARA_READ_INPUT_LENGTH_SET_03 / 2 + PARA_READ_INPUT_LENGTH / 2;
+        }
+        else if (data_set == DATA_SET_04)
+        {
+            MAX_LENGTH = PARA_READ_INPUT_LENGTH_SET_04 / 2 + PARA_READ_INPUT_LENGTH / 2;
+        }
 
+        uint16_t to_rec[MAX_LENGTH];
+        ssize_t k = tcp_receive(to_rec, MAX_LENGTH);
+        if (k = -1)
+        {
+        }
+        if (to_rec[0] == CMD_MODE_AUTO_RESONSE)
+        {
+            switch (data_set)
+            {
+            case DATA_SET_01:
+
+                if ((int)to_rec[1] == PARA_READ_INPUT_LENGTH_SET_01)
+                {
+
+                    for (size_t i = 0; i < (int)PARA_READ_INPUT_LENGTH_SET_01 / 2; i++)
+                    {
+                        intput_data_set_01[i] = flip_word(to_rec[i + 5]);
+
+                        /* code */
+                    }
+                }
+
+                break;
+            case DATA_SET_02:
+                if ((int)to_rec[1] == PARA_READ_INPUT_LENGTH_SET_02)
+                {
+                    for (size_t i = 0; i < (int)PARA_READ_INPUT_LENGTH_SET_02 / 2; i++)
+                    {
+                        intput_data_set_02[i] = flip_word(to_rec[i + 5]);
+                        /* code */
+                    }
+                }
+                break;
+            case DATA_SET_03:
+                if ((int)to_rec[1] == PARA_READ_INPUT_LENGTH_SET_03)
+                {
+                    for (size_t i = 0; i < (int)PARA_READ_INPUT_LENGTH_SET_03 / 2; i++)
+                    {
+                        intput_data_set_03[i] = flip_word(to_rec[i + 5]);
+                        /* code */
+                    }
+                }
+                break;
+            case DATA_SET_04:
+                if ((int)to_rec[1] == PARA_READ_INPUT_LENGTH_SET_04)
+                {
+                    for (size_t i = 0; i < (int)PARA_READ_INPUT_LENGTH_SET_04 / 2; i++)
+                    {
+                        intput_data_set_04[i] = flip_word(to_rec[i + 5]);
+                        /* code */
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
 int clientSock::tcp_write(uint8_t data_set)
 {
     request_write(data_set);
-  
+
     uint16_t to_rec[2];
     ssize_t k = tcp_receive(to_rec, 2);
     if (k = -1)
@@ -848,14 +937,13 @@ int clientSock::tcp_write_all()
 }
 int clientSock::flex_write_bit(uint8_t data_set, int address_word, int address_bit, const bool value)
 {
-    write_bit(data_set,address_word,address_bit,value);
+    write_bit(data_set, address_word, address_bit, value);
     tcp_write(data_set);
 }
-bool clientSock::flex_read_bit(uint8_t data_set,int address_word, int address_bit)
+bool clientSock::flex_read_bit(uint8_t data_set, int address_word, int address_bit)
 {
     tcp_read(data_set);
-    return read_bit(data_set,address_word,address_bit);
-
+    return read_bit(data_set, address_word, address_bit);
 }
 size_t clientSock::tcp_send(uint16_t *to_send, int length)
 {
@@ -878,15 +966,12 @@ size_t clientSock::tcp_send(uint16_t *to_send, int length)
         if (rv == -1)
         {
 
-            
             cout << errno << "  " << strerror(errno) << endl;
             set_bad_con();
-            
         }
         else if (rv == 0)
         {
 
-           
             set_bad_con();
             sentBytes = 0;
         }
@@ -913,7 +998,7 @@ size_t clientSock::tcp_send(uint16_t *to_send, int length)
     }
     else
     {
-        connected=false;
+        connected = false;
         return 1;
     }
 }
@@ -937,31 +1022,30 @@ size_t clientSock::tcp_receive(uint16_t *buffer, int length)
     if (rv <= -1)
     {
         cout << ("socket error accured") << endl;
-      
+
         set_bad_con();
         return -1;
     }
     else if (rv == 0)
     {
         cout << ("socket timeout occured") << endl;
-        
+
         set_bad_con();
         return -1;
     }
     else if (rv > 0 && FD_ISSET(sockfd, &readfds))
     {
 
-        int tn = ::recv(sockfd, buffer_array, buffSize, 0); //avoid signcompare warning
+        int tn = ::recv(sockfd, buffer_array, buffSize, 0); // avoid signcompare warning
 
         if (tn > 0)
         {
 
-                for (int i = 0; i < length; i++)
-                {
-                    buffer[i] = flip_word(buffer_array[i]);
-                }
-                return tn;
-
+            for (int i = 0; i < length; i++)
+            {
+                buffer[i] = flip_word(buffer_array[i]);
+            }
+            return tn;
         }
         else if (tn == -1)
         {
@@ -980,7 +1064,7 @@ size_t clientSock::tcp_receive(uint16_t *buffer, int length)
 void clientSock::set_bad_con()
 {
     ROS_ERROR("DISCONNECT FLEXISOFT");
-    connected=false;
+    connected = false;
 }
 void clientSock::set_bad_input()
 {
