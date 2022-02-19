@@ -182,7 +182,7 @@ void fx3_saf_safety_system_function_pub()
 void m5_out_enc_enable_id_function_pub()
 {
     uint8_t speedTarget = Flexisoft->read_half_byte(M5_OUT_ENC_ENABLE_ID_00);
-    ROS_INFO("--------------: [%d]", speedTarget);
+
     switch (speedTarget)
     {
     case 1:
@@ -215,7 +215,7 @@ void m5_out_enc_enable_id_function_pub()
         break;
     }
 
-    ROS_INFO("m5_out_enc_enable_id: [%d]", m5_out_enc_enable_id.SPEED);
+   
 
     m5_out_enc_enable_id_pub.publish(m5_out_enc_enable_id);
 }
