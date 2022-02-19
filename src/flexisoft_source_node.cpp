@@ -124,7 +124,7 @@ void fx3_saf_mode_switch_function_pub()
 }
 void fx3_saf_safety_system_function_pub()
 {
-    fx3_saf_safety_system.safety_ready = Flexisoft->read_bit(FX3_SAF_STOP_RESUME);
+    fx3_saf_safety_system.safety_ready = Flexisoft->read_bit(FX3_SAF_STOP_STATES);
     fx3_saf_safety_system.safety_good = Flexisoft->read_bit(FX3_SAF_STATUS_RUNNING);
     fx3_saf_safety_system.muted_safety = Flexisoft->read_bit(FX3_SAF_MUTE_RELEASE);
     fx3_saf_safety_system.operator_move = Flexisoft->read_bit(FX3_SAF_STOP_OPERATIONAL);
@@ -239,6 +239,7 @@ void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::C
             {
                 fx3_saf_safety_system.camera_field.FIELD = 4;
                 Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, true);
+
             }else 
             {
                fx3_saf_safety_system.camera_field.FIELD = 0;
