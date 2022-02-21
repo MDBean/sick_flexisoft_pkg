@@ -128,6 +128,7 @@ void fx3_saf_mode_switch_function_pub()
 void use_safety_camera_function_pub(bool value)
 {
     safety_camera.data = value;
+    ROS_INFO("use_safety_camera_function_pub: [%x]", value);
     use_safety_camera_pub.publish(safety_camera);
 }
 void fx3_saf_safety_system_function_pub()
