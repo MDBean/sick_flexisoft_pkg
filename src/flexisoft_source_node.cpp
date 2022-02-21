@@ -144,7 +144,7 @@ void fx3_saf_safety_system_function_pub()
     fx3_saf_safety_system.device_state.FAULT_DRIVER = Flexisoft->read_bit(FX3_SAF_FAULT_DRIVER);
     fx3_saf_safety_system.device_state.FAULT_ENC = Flexisoft->read_bit(FX3_SAF_FAULT_ENC);
 
-    use_safety_camera_function_pub(fx3_saf_safety_system.muted_safety);
+    
 
     if (Flexisoft->read_bit(FX3_SAF_MODE_AUTO))
     {
@@ -388,6 +388,7 @@ bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::R
     bool time_out = false;
     secs = ros::Time::now().toSec();
     Flexisoft->flex_write_bit(IPC_SAF_MUTE_RELEASE, req.MUTE_RELEASE);
+    use_safety_camera_function_pub(req.MUTE_RELEASE);
     while (!time_out)
     {
         if (ros::Time::now().toSec() - secs >= 3)
