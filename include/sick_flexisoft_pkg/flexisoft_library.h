@@ -21,6 +21,7 @@
 #include <ros/ros.h>
 #include <boost/thread.hpp>
 #include <sstream>
+#include "std_msgs/Bool.h"
 
 
 using namespace std;

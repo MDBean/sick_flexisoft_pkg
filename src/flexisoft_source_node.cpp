@@ -123,7 +123,12 @@ void fx3_saf_protective_field_function_pub()
 void fx3_saf_mode_switch_function_pub()
 {
 
-    fx3_saf_mode_switch_pub.publish();
+    //fx3_saf_mode_switch_pub.publish();
+}
+void use_safety_camera_function_pub(bool value)
+{
+    safety_camera.data = value;
+    use_safety_camera_pub.publish(safety_camera);
 }
 void fx3_saf_safety_system_function_pub()
 {
@@ -140,7 +145,7 @@ void fx3_saf_safety_system_function_pub()
     fx3_saf_safety_system.device_state.FAULT_ENC = Flexisoft->read_bit(FX3_SAF_FAULT_ENC);
 
     use_safety_camera_function_pub(fx3_saf_safety_system.muted_safety);
-    
+
     if (Flexisoft->read_bit(FX3_SAF_MODE_AUTO))
     {
         fx3_saf_safety_system.mode_switch.MODE = 0;
@@ -178,8 +183,6 @@ void fx3_saf_safety_system_function_pub()
     {
         fx3_saf_safety_system.laser_field.FIELD = 5;
     }
-
-    
 
     fx3_saf_safety_system_pub.publish(fx3_saf_safety_system);
 }
@@ -219,59 +222,47 @@ void m5_out_enc_enable_id_function_pub()
         break;
     }
 
-   
-
     m5_out_enc_enable_id_pub.publish(m5_out_enc_enable_id);
 }
-void use_safety_camera_function_pub(bool value)
-{
-    safety_camera.data=value; 
-    use_safety_camera_pub.publish(safety_camera);
-}
 
-void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::ConstPtr& msg)
+
+void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::ConstPtr &msg)
 {
 
-
-    if(msg->system_good==true){
-        if (msg->enable==true)
+    if (msg->system_good == true)
+    {
+        if (msg->enable == true)
         {
-            if (msg->fields[0]==true)
+            if (msg->fields[0] == true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 2;
                 Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
-
-             }else if (msg->fields[1]==true)
+            }
+            else if (msg->fields[1] == true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 3;
                 Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
- 
-            }else if (msg->fields[2]==true)
+            }
+            else if (msg->fields[2] == true)
             {
                 fx3_saf_safety_system.camera_field.FIELD = 4;
                 Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, true);
-
-            }else 
+            }
+            else
             {
-               fx3_saf_safety_system.camera_field.FIELD = 0;
-               Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
-
-            }else
-            {
+                fx3_saf_safety_system.camera_field.FIELD = 0;
                 Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
             }
-            
-            
-            
-        }else
+        }
+        else
         {
             Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
         }
-        
-        
     }
-
-
+    else
+    {
+        Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
+    }
 }
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
@@ -353,7 +344,7 @@ bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
                 ROS_INFO(" FX3_SAF_ZONE_HAZARD done");
                 return true;
             }
-            
+
             ros::Duration(0.1).sleep();
         }
         ROS_ERROR(" FlexSetZoneSrv ======= 2 ED");
@@ -383,7 +374,7 @@ bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
             ros::Duration(0.1).sleep();
         }
         res.success = false;
-       // return false;
+        // return false;
         break;
 
     default:
@@ -494,7 +485,6 @@ int main(int argc, char **argv)
     fx3_saf_safety_system_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_safety_system>("/fx3_saf_safety_system_pub", 10);
     m5_out_enc_enable_id_pub = nh.advertise<sick_flexisoft_pkg::m5_out_enc_enable_id>("/m5_out_enc_enable_id_pub", 10);
     use_safety_camera_pub = nh.advertise<std_msgs::Bool>("/use_safety_camera", 10);
-    
 
     ros::Subscriber depth_camera_fields_safety_sub = nh.subscribe("/depth_camera/fields_safety", 10, depth_camera_fields_safety_CallBack);
 
