@@ -33,6 +33,7 @@ ros::Publisher fx3_saf_protective_field_pub;
 ros::Publisher fx3_saf_mode_switch_pub;
 ros::Publisher fx3_saf_safety_system_pub;
 ros::Publisher m5_out_enc_enable_id_pub;
+ros::Publisher use_safety_camera_pub;
 
 sick_flexisoft_pkg::fx3_saf_protective_fault fx3_saf_protective_fault;
 sick_flexisoft_pkg::fx3_saf_stop_states fx3_saf_stop_states;
@@ -47,6 +48,8 @@ sick_flexisoft_pkg::fx3_saf_safety_system fx3_saf_safety_system;
 sick_flexisoft_pkg::m5_out_enc_enable_id m5_out_enc_enable_id;
 
 detect_obstacle::fields_safety fields_safety;
+
+std_msgs::Bool safety_camera;
 
 void fx3_saf_protective_fault_function_pub()
 {
@@ -120,7 +123,7 @@ void fx3_saf_protective_field_function_pub()
 void fx3_saf_mode_switch_function_pub()
 {
 
-    fx3_saf_mode_switch_pub.publish(fx3_saf_mode_switch);
+    fx3_saf_mode_switch_pub.publish();
 }
 void fx3_saf_safety_system_function_pub()
 {
@@ -136,6 +139,7 @@ void fx3_saf_safety_system_function_pub()
     fx3_saf_safety_system.device_state.FAULT_DRIVER = Flexisoft->read_bit(FX3_SAF_FAULT_DRIVER);
     fx3_saf_safety_system.device_state.FAULT_ENC = Flexisoft->read_bit(FX3_SAF_FAULT_ENC);
 
+    use_safety_camera_function_pub(fx3_saf_safety_system.muted_safety);
     
     if (Flexisoft->read_bit(FX3_SAF_MODE_AUTO))
     {
@@ -219,6 +223,11 @@ void m5_out_enc_enable_id_function_pub()
 
     m5_out_enc_enable_id_pub.publish(m5_out_enc_enable_id);
 }
+void use_safety_camera_function_pub(bool value)
+{
+    safety_camera.data=value; 
+    use_safety_camera_pub.publish(safety_camera);
+}
 
 void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::ConstPtr& msg)
 {
@@ -247,10 +256,18 @@ void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::C
                fx3_saf_safety_system.camera_field.FIELD = 0;
                Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
 
+            }else
+            {
+                Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
             }
             
             
+            
+        }else
+        {
+            Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
         }
+        
         
     }
 
@@ -476,6 +493,8 @@ int main(int argc, char **argv)
     fx3_saf_mode_switch_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_mode_switch>("/fx3_saf_mode_switch_pub", 10);
     fx3_saf_safety_system_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_safety_system>("/fx3_saf_safety_system_pub", 10);
     m5_out_enc_enable_id_pub = nh.advertise<sick_flexisoft_pkg::m5_out_enc_enable_id>("/m5_out_enc_enable_id_pub", 10);
+    use_safety_camera_pub = nh.advertise<std_msgs::Bool>("/use_safety_camera", 10);
+    
 
     ros::Subscriber depth_camera_fields_safety_sub = nh.subscribe("/depth_camera/fields_safety", 10, depth_camera_fields_safety_CallBack);
 
