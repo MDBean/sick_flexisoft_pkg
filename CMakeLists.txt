@@ -77,6 +77,7 @@ FlexSetZoneSrv.srv
 FlexSetMuteReleaseSrv.srv
 FlexSetPayloadSrv.srv
 FlexSetMappingSrv.srv
+MuteCameraSafetySrv.srv
 #  Service1.srv
 #   Service2.srv
 )

@@ -5,6 +5,7 @@
 #include <sick_flexisoft_pkg/FlexSetMuteReleaseSrv.h>
 #include <sick_flexisoft_pkg/FlexSetPayloadSrv.h>
 #include <sick_flexisoft_pkg/FlexSetMappingSrv.h>
+#include <sick_flexisoft_pkg/MuteCameraSafetySrv.h>
 
 #include <sick_flexisoft_pkg/fx3_saf_protective_fault.h>
 #include <sick_flexisoft_pkg/fx3_saf_stop_states.h>
@@ -46,6 +47,7 @@ sick_flexisoft_pkg::fx3_saf_protective_field fx3_saf_protective_field;
 sick_flexisoft_pkg::fx3_saf_mode_switch fx3_saf_mode_switch;
 sick_flexisoft_pkg::fx3_saf_safety_system fx3_saf_safety_system;
 sick_flexisoft_pkg::m5_out_enc_enable_id m5_out_enc_enable_id;
+//sick_flexisoft_pkg::MuteCameraSafety MuteCameraSafety;
 
 detect_obstacle::fields_safety fields_safety;
 
@@ -409,6 +411,32 @@ bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::R
     res.success = false;
     return false;
 }
+bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Request &req,
+                                    sick_flexisoft_pkg::MuteCameraSafetySrv::Response &res)
+{
+    double secs;
+    bool time_out = false;
+    secs = ros::Time::now().toSec();
+    use_safety_camera_function_pub(req.MUTE_RELEASE);
+    while (!time_out)
+    {
+        if (ros::Time::now().toSec() - secs >= 3)
+        {
+            time_out = true;
+        }
+        if (fields_safety.enable == req.MUTE_RELEASE)
+        {
+            res.success = true;
+         
+            ROS_INFO(" MuteCameraSafetySrv done");
+            return true;
+        }
+        //
+        ros::Duration(0.1).sleep();
+    }
+    res.success = false;
+    return false;
+}
 bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
                                 sick_flexisoft_pkg::FlexSetPayloadSrv::Response &res)
 {
@@ -474,6 +502,7 @@ int main(int argc, char **argv)
     ros::ServiceServer Srv_FlexSetMuteReleaseSrv = nh.advertiseService("FlexSetMuteReleaseSrv", ServiceCbFlexSetMuteReleaseSrv);
     ros::ServiceServer Srv_FlexSetPayloadSrv = nh.advertiseService("FlexSetPayloadSrv", ServiceCbFlexSetPayloadSrv);
     ros::ServiceServer Srv_FlexSetMappingSrv = nh.advertiseService("FlexSetMappingSrv", ServiceCbFlexSetMappingSrv);
+    ros::ServiceServer Srv_MuteCameraSafetySrv = nh.advertiseService("MuteCameraSafetySrv", ServiceCbMuteCameraSafetySrv);
 
     fx3_saf_protective_fault_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_protective_fault>("/fx3_saf_protective_fault_pub", 10);
     fx3_saf_stop_states_pub = nh.advertise<sick_flexisoft_pkg::fx3_saf_stop_states>("/fx3_saf_stop_states_pub", 10);
