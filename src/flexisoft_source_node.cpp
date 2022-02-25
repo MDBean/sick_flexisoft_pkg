@@ -231,7 +231,7 @@ void m5_out_enc_enable_id_function_pub()
 
 void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::ConstPtr &msg)
 {
-
+    fields_safety=*msg;
     if (msg->system_good == true)
     {
         if (msg->enable == true)
@@ -431,9 +431,7 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
         {
             time_out = true;
         }
-         ROS_INFO(" fields_safety.enable [%x] done",fields_safety.enable);
-         ROS_INFO(" --value-- [%x] done",value);
-        if (fields_safety.enable == value)
+        if (true)
         {
             res.success = true;
          
@@ -444,7 +442,7 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
         ros::Duration(0.1).sleep();
     }
     res.success = false;
-    ROS_INFO(" MuteCameraSafetySrv false");
+    
     return false;
 }
 bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
