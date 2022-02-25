@@ -417,14 +417,23 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
     double secs;
     bool time_out = false;
     secs = ros::Time::now().toSec();
-    use_safety_camera_function_pub(req.MUTE_RELEASE);
+    bool value;
+    if(req.MUTE_RELEASE){
+        value=false;
+    }else{
+        value=true;
+    }
+    use_safety_camera_function_pub(value);
+    ROS_INFO(" use_safety_camera_function_pub [%x] done",value);
     while (!time_out)
     {
         if (ros::Time::now().toSec() - secs >= 3)
         {
             time_out = true;
         }
-        if (fields_safety.enable == req.MUTE_RELEASE)
+         ROS_INFO(" fields_safety.enable [%x] done",fields_safety.enable);
+         ROS_INFO(" --value-- [%x] done",value);
+        if (fields_safety.enable == value)
         {
             res.success = true;
          
@@ -435,6 +444,7 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
         ros::Duration(0.1).sleep();
     }
     res.success = false;
+    ROS_INFO(" MuteCameraSafetySrv false");
     return false;
 }
 bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
