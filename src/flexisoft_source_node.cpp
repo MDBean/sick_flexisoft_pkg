@@ -256,6 +256,7 @@ void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::C
         }
         else
         {
+            fx3_saf_safety_system.camera_field.FIELD = 0;
             Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
         }
     }
@@ -267,7 +268,8 @@ void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::C
 }
 void depth_camera_field_safety_fake_muted()
 {
-    Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, true);
+    fx3_saf_safety_system.camera_field.FIELD = 0;
+        Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
 }
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
@@ -439,7 +441,7 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
         if (true)
         {
             res.success = true;
-
+            depth_camera_field_safety_fake_muted()
             ROS_INFO(" MuteCameraSafetySrv done");
             return true;
         }
