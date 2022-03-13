@@ -47,7 +47,7 @@ sick_flexisoft_pkg::fx3_saf_protective_field fx3_saf_protective_field;
 sick_flexisoft_pkg::fx3_saf_mode_switch fx3_saf_mode_switch;
 sick_flexisoft_pkg::fx3_saf_safety_system fx3_saf_safety_system;
 sick_flexisoft_pkg::m5_out_enc_enable_id m5_out_enc_enable_id;
-//sick_flexisoft_pkg::MuteCameraSafety MuteCameraSafety;
+// sick_flexisoft_pkg::MuteCameraSafety MuteCameraSafety;
 
 detect_obstacle::fields_safety fields_safety;
 
@@ -125,7 +125,7 @@ void fx3_saf_protective_field_function_pub()
 void fx3_saf_mode_switch_function_pub()
 {
 
-    //fx3_saf_mode_switch_pub.publish();
+    // fx3_saf_mode_switch_pub.publish();
 }
 void use_safety_camera_function_pub(bool value)
 {
@@ -146,8 +146,6 @@ void fx3_saf_safety_system_function_pub()
     fx3_saf_safety_system.device_state.FAULT_EDM = Flexisoft->read_bit(FX3_SAF_FAULT_EDM);
     fx3_saf_safety_system.device_state.FAULT_DRIVER = Flexisoft->read_bit(FX3_SAF_FAULT_DRIVER);
     fx3_saf_safety_system.device_state.FAULT_ENC = Flexisoft->read_bit(FX3_SAF_FAULT_ENC);
-
-    
 
     if (Flexisoft->read_bit(FX3_SAF_MODE_AUTO))
     {
@@ -228,10 +226,9 @@ void m5_out_enc_enable_id_function_pub()
     m5_out_enc_enable_id_pub.publish(m5_out_enc_enable_id);
 }
 
-
 void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::ConstPtr &msg)
 {
-    fields_safety=*msg;
+    fields_safety = *msg;
     if (msg->system_good == true)
     {
         if (msg->enable == true)
@@ -264,8 +261,13 @@ void depth_camera_fields_safety_CallBack(const detect_obstacle::fields_safety::C
     }
     else
     {
+        fx3_saf_safety_system.camera_field.FIELD = 0;
         Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, false);
     }
+}
+void depth_camera_field_safety_fake_muted()
+{
+    Flexisoft->write_bit(IPC_STOP_OBSTACLE_RELEASE, true);
 }
 
 bool ServiceCbFlexSetStopOperationalSrv(sick_flexisoft_pkg::FlexSetStopOperationalSrv::Request &req,
@@ -412,19 +414,22 @@ bool ServiceCbFlexSetMuteReleaseSrv(sick_flexisoft_pkg::FlexSetMuteReleaseSrv::R
     return false;
 }
 bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Request &req,
-                                    sick_flexisoft_pkg::MuteCameraSafetySrv::Response &res)
+                                  sick_flexisoft_pkg::MuteCameraSafetySrv::Response &res)
 {
     double secs;
     bool time_out = false;
     secs = ros::Time::now().toSec();
     bool value;
-    if(req.MUTE_RELEASE){
-        value=false;
-    }else{
-        value=true;
+    if (req.MUTE_RELEASE)
+    {
+        value = false;
+    }
+    else
+    {
+        value = true;
     }
     use_safety_camera_function_pub(value);
-    ROS_INFO(" use_safety_camera_function_pub [%x] done",value);
+    ROS_INFO(" use_safety_camera_function_pub [%x] done", value);
     while (!time_out)
     {
         if (ros::Time::now().toSec() - secs >= 3)
@@ -434,7 +439,7 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
         if (true)
         {
             res.success = true;
-         
+
             ROS_INFO(" MuteCameraSafetySrv done");
             return true;
         }
@@ -442,7 +447,7 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
         ros::Duration(0.1).sleep();
     }
     res.success = false;
-    
+
     return false;
 }
 bool ServiceCbFlexSetPayloadSrv(sick_flexisoft_pkg::FlexSetPayloadSrv::Request &req,
