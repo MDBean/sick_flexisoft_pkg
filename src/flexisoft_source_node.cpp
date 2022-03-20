@@ -194,28 +194,28 @@ void m5_out_enc_enable_id_function_pub()
     switch (speedTarget)
     {
     case 1:
-        m5_out_enc_enable_id.SPEED = 40;
+        m5_out_enc_enable_id.SPEED = 30;
         break;
     case 2:
-        m5_out_enc_enable_id.SPEED = 80;
+        m5_out_enc_enable_id.SPEED = 70;
         break;
     case 3:
-        m5_out_enc_enable_id.SPEED = 160;
+        m5_out_enc_enable_id.SPEED = 140;
         break;
     case 4:
-        m5_out_enc_enable_id.SPEED = 320;
+        m5_out_enc_enable_id.SPEED = 280;
         break;
     case 5:
-        m5_out_enc_enable_id.SPEED = 640;
+        m5_out_enc_enable_id.SPEED = 560;
         break;
     case 6:
-        m5_out_enc_enable_id.SPEED = 960;
+        m5_out_enc_enable_id.SPEED = 880;
         break;
     case 7:
-        m5_out_enc_enable_id.SPEED = 1280;
+        m5_out_enc_enable_id.SPEED = 1200;
         break;
     case 8:
-        m5_out_enc_enable_id.SPEED = 1600;
+        m5_out_enc_enable_id.SPEED = 1520;
         break;
 
     default:
