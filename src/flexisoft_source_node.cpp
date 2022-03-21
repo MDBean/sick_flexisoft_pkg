@@ -441,7 +441,7 @@ bool ServiceCbMuteCameraSafetySrv(sick_flexisoft_pkg::MuteCameraSafetySrv::Reque
         if (true)
         {
             res.success = true;
-            depth_camera_field_safety_fake_muted()
+            depth_camera_field_safety_fake_muted();
             ROS_INFO(" MuteCameraSafetySrv done");
             return true;
         }
