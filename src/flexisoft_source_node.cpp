@@ -308,9 +308,11 @@ bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
     switch (req.ZONE)
     {
     case 1:
-        Flexisoft->write_bit(IPC_SAF_ZONE_OPEATING, true);
-        Flexisoft->write_bit(IPC_SAF_ZONE_HAZARD, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_OPEATING, true);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_HAZARD, false);
         Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_CONFINED, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_LOAD, false);
         while (!time_out)
         {
             if (ros::Time::now().toSec() - secs >= 3)
@@ -332,11 +334,12 @@ bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
         return false;
         break;
     case 2:
-        ROS_ERROR(" FlexSetZoneSrv ======= 2");
-        Flexisoft->write_bit(IPC_SAF_ZONE_OPEATING, false);
-        Flexisoft->write_bit(IPC_SAF_ZONE_HAZARD, true);
+        ROS_ERROR(" FlexSetZoneSrv IPC_SAF_ZONE_HAZARD");
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_OPEATING, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_HAZARD, true);
         Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, false);
-        ROS_ERROR(" FlexSetZoneSrv ======= 2 ING");
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_CONFINED, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_LOAD, false);
         while (!time_out)
         {
             if (ros::Time::now().toSec() - secs >= 3)
@@ -354,15 +357,16 @@ bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
 
             ros::Duration(0.1).sleep();
         }
-        ROS_ERROR(" FlexSetZoneSrv ======= 2 ED");
         res.success = false;
         // return false;
         break;
     case 3:
-        ROS_ERROR(" FlexSetZoneSrv ======= 3");
-        Flexisoft->write_bit(IPC_SAF_ZONE_OPEATING, false);
-        Flexisoft->write_bit(IPC_SAF_ZONE_HAZARD, false);
+        ROS_ERROR(" FlexSetZoneSrv IPC_SAF_ZONE_RESTRICTED");
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_OPEATING, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_HAZARD, false);
         Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, true);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_CONFINED, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_LOAD, false);
         while (!time_out)
         {
             if (ros::Time::now().toSec() - secs >= 3)
@@ -375,6 +379,60 @@ bool ServiceCbFlexSetZoneSrv(sick_flexisoft_pkg::FlexSetZoneSrv::Request &req,
                 res.success = true;
                 ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_ZONE_RESTRICTED));
                 ROS_INFO(" FX3_SAF_ZONE_RESTRICTED done");
+                return true;
+            }
+            //
+            ros::Duration(0.1).sleep();
+        }
+        res.success = false;
+        // return false;
+        break;
+    case 4:
+        ROS_ERROR(" FlexSetZoneSrv IPC_SAF_ZONE_CONFINED");
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_OPEATING, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_HAZARD, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, true);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_CONFINED, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_LOAD, false);
+        while (!time_out)
+        {
+            if (ros::Time::now().toSec() - secs >= 3)
+            {
+                time_out = true;
+            }
+
+            if (Flexisoft->flex_read_bit(FX3_SAF_ZONE_CONFINED) == true)
+            {
+                res.success = true;
+                ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_ZONE_CONFINED));
+                ROS_INFO(" FX3_SAF_ZONE_CONFINED");
+                return true;
+            }
+            //
+            ros::Duration(0.1).sleep();
+        }
+        res.success = false;
+        // return false;
+        break;
+    case 5:
+        ROS_ERROR(" FlexSetZoneSrv IPC_SAF_ZONE_LOAD");
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_OPEATING, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_HAZARD, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_RESTRICTED, true);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_CONFINED, false);
+        Flexisoft->flex_write_bit(IPC_SAF_ZONE_LOAD, false);
+        while (!time_out)
+        {
+            if (ros::Time::now().toSec() - secs >= 3)
+            {
+                time_out = true;
+            }
+
+            if (Flexisoft->flex_read_bit(FX3_SAF_ZONE_LOAD,) == true)
+            {
+                res.success = true;
+                ROS_INFO("sending back response: [%x]", Flexisoft->flex_read_bit(FX3_SAF_ZONE_LOAD,));
+                ROS_INFO(" FX3_SAF_ZONE_LOAD, done");
                 return true;
             }
             //

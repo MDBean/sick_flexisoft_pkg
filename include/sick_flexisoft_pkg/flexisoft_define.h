@@ -189,9 +189,11 @@
 #define FX3_SAF_STATUS_PRE_RESUME	    1 , 18 , 15
 #define FX3_SAF_STATUS_RUNNING	    1 , 18 , 11
 #define FX3_SAF_MUTE_RELEASE	    1 , 19 , 7
-#define FX3_SAF_ZONE_OPEATING	    1 , 19 , 3
-#define FX3_SAF_ZONE_HAZARD	    1 , 19 , 2
-#define FX3_SAF_ZONE_RESTRICTED	    1 , 19 , 1
+#define FX3_SAF_ZONE_LOAD	    1 , 19 , 4
+#define FX3_SAF_ZONE_CONFINED	    1 , 19 , 3
+#define FX3_SAF_ZONE_RESTRICTED	    1 , 19 , 2
+#define FX3_SAF_ZONE_HAZARD	    1 , 19 , 1
+#define FX3_SAF_ZONE_OPEATING	    1 , 19 , 0
 #define FX3_SAF_PAYLOAD_RELEASE	    1 , 19 , 15
 #define FX3_SAF_MAPPING_RELEASE	    1 , 19 , 14
 #define FX3_SAF_MODE_AUTO	    1 , 19 , 11
@@ -285,9 +287,12 @@
 #define IPC_SAF_MAPPING_RELEASE	    2 , 1 , 0
 #define IPC_SAF_PAYLOAD_RELEASE	    2 , 1 , 8
 
+#define IPC_SAF_ZONE_LOAD	    3 , 0 , 4
+#define IPC_SAF_ZONE_CONFINED	    3 , 0 , 3
 #define IPC_SAF_ZONE_RESTRICTED	    3 , 0 , 2
 #define IPC_SAF_ZONE_HAZARD	    3 , 0 , 1
 #define IPC_SAF_ZONE_OPEATING	    3 , 0 , 0
+
 
 
 
