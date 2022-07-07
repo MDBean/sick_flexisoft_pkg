@@ -21,8 +21,8 @@
 
 #include "detect_obstacle/fields_safety.h"
 
-// clientSock *Flexisoft = new clientSock("10.147.20.100", 1100);
-clientSock *Flexisoft = new clientSock("192.168.1.100", 1101, true);
+ clientSock *Flexisoft = new clientSock("192.168.1.1", 9100);
+//clientSock *Flexisoft = new clientSock("192.168.1.100", 1101, true);
 ros::Publisher fx3_saf_protective_fault_pub;
 ros::Publisher fx3_saf_stop_states_pub;
 ros::Publisher fx3_saf_stop_operational_pub;
@@ -621,7 +621,7 @@ int main(int argc, char **argv)
             fx3_saf_safety_system_function_pub();
             m5_out_enc_enable_id_function_pub();
 
-            Flexisoft->tcp_write_all();
+    
 
             ros::spinOnce();
             loop_rate.sleep();
